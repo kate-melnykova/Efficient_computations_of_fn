@@ -1,5 +1,6 @@
 This folder (will) contain various packages for
-most common scientific functions.
+most common scientific functions. It is under
+development.
  
 Function factorial.py computes factorial by 
 Fikret Cihana, Fatih Aydinb, Adnan Fatih Kocamaz
