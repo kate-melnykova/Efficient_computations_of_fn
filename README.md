@@ -12,3 +12,7 @@ Function compute_pi.py uses Chudnovsky algorithm
 (https://en.wikipedia.org/wiki/Chudnovsky_algorithm)
 for computing the value of pi.
 
+Function compute_e.py utilizes Brothers' Formulae
+(https://www.intmath.com/exponential-logarithmic-functions/calculating-e.php)
+
+
