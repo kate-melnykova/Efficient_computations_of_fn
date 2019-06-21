@@ -1,26 +1,41 @@
 from flask import Flask
 from flask import request
 from flask import render_template
-import factorial, compute_pi, compute_e
+from factorial import factorial
+from compute_pi import compute_pi
+from compute_e import compute_e
 app = Flask(__name__)
 
-@app.route("/")
-def hello():
-    return "Welcome to scientific computation"
-
-name = "User"
-@app.route("/compute", methods=['GET','POST'])
+@app.route("/", methods=["POST","GET"])
 def implementation():
-    error = None
     if request.method == 'POST':
-        if request.form['factorial']:
-            return render_template('webpage.html',factorial=factorial)
-        else:
-            error = 'Invalid entry'
-    # the code below is executed if the request method
-    # was GET or the credentials were invalid
-    return render_template('webpage.html',factorial=None)#, error=error)
+        func_name = request.form["func_name"]
+        if func_name == "factorial":
+            inp_val = int(request.form['inp'])
+            factorial_val = str(factorial(inp_val))
+            n_digits = int(request.form['n_digits'])
+            if len(factorial_val) > n_digits:
+                factorial_val = factorial_val[:n_digits+1] + "e+" +str(len(factorial_val)-n_digits)
+            return render_template('webpage.html',inp=inp_val, func_name="factorial", out_val=factorial_val)
+        elif func_name == "pi":
+            time_limit = int(request.form['inp'])
+            n_digits = int(request.form['n_digits'])
+            pi_val = str(compute_pi(time_limit,n_digits+2))
+            #we keep n_digits + 1 place for floating point + 1 for 3
+            return render_template('webpage.html', inp=time_limit, func_name="pi", out_val=pi_val)
+        elif func_name == "e":
+            time_limit = int(request.form['inp'])
+            n_digits = int(request.form['n_digits'])
+            e_val = str(compute_e(time_limit, n_digits + 2))
+            # we keep n_digits + 1 place for floating point + 1 for 2
+            return render_template('webpage.html', inp=time_limit, func_name="e", out_val=e_val)
+        return render_template('webpage.html',inp=None, func_name=None, out_val=None)
+    else:
+        return render_template('webpage.html', inp=None, func_name=None, out_val=None)
+
 
 
 if __name__ == '__main__':
-    app.run()
+    #execfile('modbusreginfo.py')
+    app.run(host='localhost', port=5000, debug=True)#, threaded=True)
+    #app.run()

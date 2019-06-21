@@ -19,7 +19,7 @@ def factorial(n: str)->int:
     sums = [sum(list_integ[i:]) for i in range(int(n/2))]
     for i in range(int(n/2)):
         factorial_val *= sums[i]
-    print(factorial_val)
+    #print(factorial_val)
     return factorial_val
 
 if __name__ == '__main__':

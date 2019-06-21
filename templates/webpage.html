@@ -15,21 +15,42 @@
 
 <h1>Online calculator</h1>
 
-<form action = "http://127.0.0.1:5000/compute" method = "POST">
-    <p>Factorial of <input type="number" name="factorial" min="1" max="5" value="1"/></p>
-    <!--<p>Physics <input type = "text" name = "Physics" /></p>
-    <p>Chemistry <input type = "text" name = "chemistry" /></p>
-    <p>Maths <input type ="text" name = "Mathematics" /></p>-->
+<form action = "http://127.0.0.1:5000/" method = "POST">
+    <p> Compute
+    <select name="func_name">
+        <option value = "factorial"> Factorial of </option>
+        <option value = "pi"> Pi over time (in sec) </option>
+        <option value = "e"> e over time (in sec) </option>
+    </select>
+
+    <input type="number" name="inp" min="1" max="10000" value="1" required/>
+        and display first
+        <input type="number" name="n_digits" min="3" max="10000" value="10" required/> digits
+    </p>
+    <!--<p>Pi up to <input type = "number" name = "pi" /> digits</p>-->
     <p><input type = "submit" value = "submit" /></p>
 </form>
 
-<!--
-{% if factorial %}
-<form action = "http://127.0.0.1:5000/compute" method="GET">
-    <p>Factorial value = {{factorial}}</p>
-</form>
+{% if inp %}
+<p>Computed values</p>
+    {%if func_name == "factorial" %}
+        <form action = "http://127.0.0.1:5000/" method="POST">
+            <p>Factorial of {{inp}} equals {{out_val}}</p>
+        </form>
+    {% elif func_name == "pi" %}
+        <form action = "http://127.0.0.1:5000/" method="POST">
+            <p>Pi = {{out_val}}</p>
+            <p>This value was computed with time limit {{inp}}</p>
+        </form>
+    {% elif func_name == "e" %}
+        <form action = "http://127.0.0.1:5000/" method="POST">
+            <p>e = {{out_val}}</p>
+            <p>This value was computed with time limit {{inp}}</p>
+        </form>
+    {% else %}
+        <p>Unknown error </p>
+    {% endif %}
 {% endif %}
--->
 
 </body>
 </html>
