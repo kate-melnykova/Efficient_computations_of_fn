@@ -3,8 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Online calculator</title>
+    <style>
+
+.topnav {
+  background-color: #333;
+  overflow: hidden;
+}
+
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #b3c6ff;
+  color: black;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #333;
+  color: white;
+  text-align: center;
+}
+</style>
+    </style>
 </head>
-<body style="background-color:#e6e6ff;">
+<body style="background-color:#d1d1e0;">
 
 <!--{% if name %}
   <h1>Hello {{ name }}!</h1>
@@ -12,11 +50,16 @@
   <h1>Hello, World!</h1>
 {% endif %}
 -->
+<div class="topnav">
+  <a class="active" href="#home">Home</a>
+  <a href="#input">Enter input</a>
+  <a href="#output">See output</a>
+  <a href="#end">End of the page</a>
+</div>
+<h1 id="home" align="center">Online calculator</h1>
+<div style="background-color:#e6e6ff; width=300px; max-width: 600px; margin: auto;">
 
-<h1 align="center">Online calculator</h1>
-<div style="background-color:lightblue; width=300px; max-width: 600px; margin: auto;">
-
-    <h2 align="center">Enter the value</h2>
+    <h2 id="input" align="center">Enter the value</h2>
     <fieldset>
 <form action = "http://127.0.0.1:5000/" method = "POST">
     <p><select name="func_name">
@@ -36,7 +79,7 @@
 
 {% if inp %}
 <fieldset>
-<h2 align="center">Computed values</h2>
+<h2 id="output" align="center">Computed values</h2>
     {%if func_name == "factorial" %}
         <form action = "http://127.0.0.1:5000/" method="POST">
             <p>Factorial of {{inp}} equals {{out_val}}</p>
@@ -45,7 +88,7 @@
         <form action = "http://127.0.0.1:5000/" method="POST">
             <p>&pi; = {{out_val}}</p>
             <p>This value was computed with time limit {{inp}}</p>
-            <p>Based on time limit, only {{acc}}-many digits after the dot are accurate</p>
+            <p>Based on time limit, {{acc}}-many digits after the dot are accurate.</p>
         </form>
     {% elif func_name == "e" %}
         <form action = "http://127.0.0.1:5000/" method="POST">
@@ -58,5 +101,6 @@
 </fieldset>
 {% endif %}
 </div>
+<div id="end" class="footer">Created in June 2019 by Kateryna Melnykova</div>
 </body>
 </html>
