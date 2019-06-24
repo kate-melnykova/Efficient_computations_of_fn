@@ -29,13 +29,17 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
 
         L += 545140134
         X *= -262537412640768000
-
-        Sum += Decimal(M * L) / X
+        term = Decimal(M * L) / X
+        Sum += term
 
     pi_val = C / Sum
     pi_val = str(pi_val)[:n_digits]
-    print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, n_digits, pi_val))
-    return Decimal(pi_val)
+    term = str(term)
+    #accuracy = str(term).lstrip('-')
+    accuracy = int(term[term.index('E')+2:])
+    #print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, n_digits, pi_val))
+
+    return Decimal(pi_val), accuracy
 
 
 if __name__ == '__main__':

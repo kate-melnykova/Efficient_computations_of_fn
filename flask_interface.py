@@ -20,13 +20,22 @@ def implementation():
         elif func_name == "pi":
             time_limit = int(request.form['inp'])
             n_digits = int(request.form['n_digits'])
-            pi_val = str(compute_pi(time_limit,n_digits+2))
+            pi_val, accuracy = compute_pi(time_limit,n_digits+2)
+            pi_val = str(pi_val)
+            idx = 70
+            while idx < len(pi_val):
+                pi_val = pi_val[:idx] + '\n ...' + pi_val[idx:]
+                idx += 70
             #we keep n_digits + 1 place for floating point + 1 for 3
-            return render_template('webpage.html', inp=time_limit, func_name="pi", out_val=pi_val)
+            return render_template('webpage.html', inp=time_limit, func_name="pi", out_val=pi_val, acc=str(accuracy-1))
         elif func_name == "e":
             time_limit = int(request.form['inp'])
             n_digits = int(request.form['n_digits'])
             e_val = str(compute_e(time_limit, n_digits + 2))
+            idx = 70
+            while idx < len(e_val):
+                e_val = e_val[:idx] + '\n ...' + e_val[idx:]
+                idx += 70
             # we keep n_digits + 1 place for floating point + 1 for 2
             return render_template('webpage.html', inp=time_limit, func_name="e", out_val=e_val)
         return render_template('webpage.html',inp=None, func_name=None, out_val=None)
