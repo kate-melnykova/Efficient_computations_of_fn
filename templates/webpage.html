@@ -44,19 +44,6 @@
 <fieldset>
 <h2 id="output" align="center">Computed values</h2>
     {%include '%s.html'% func_name %}
-
-    {#
-    {% elif func_name == "pi" %}
-            <p>&pi; = {{out_val}}</p>
-            <p>This value was computed with time limit {{inp}}</p>
-            <p>Based on time limit, {{acc}}-many digits after the dot are accurate.</p>
-    {% elif func_name == "e" %}
-            <p>e = {{out_val}}</p>
-            <p>This value was computed with time limit {{inp}}</p>
-    {% else %}
-        <p>Unknown error </p>
-    {% endif %}
-    #}
 </fieldset>
 {% endif %}
     <p id="end"></p>
