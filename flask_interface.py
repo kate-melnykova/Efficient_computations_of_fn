@@ -16,6 +16,10 @@ def implementation():
             n_digits = int(request.form['n_digits'])
             if len(factorial_val) > n_digits:
                 factorial_val = factorial_val[:n_digits+1] + "e+" +str(len(factorial_val)-n_digits)
+            idx = 70
+            while idx < len(factorial_val):
+                factorial_val = factorial_val[:idx] + '\n ...' + factorial_val[idx:]
+                idx += 70
             return render_template('webpage.html',inp=inp_val, func_name="factorial", out_val=factorial_val)
         elif func_name == "pi":
             time_limit = int(request.form['inp'])
@@ -26,7 +30,6 @@ def implementation():
             while idx < len(pi_val):
                 pi_val = pi_val[:idx] + '\n ...' + pi_val[idx:]
                 idx += 70
-            #we keep n_digits + 1 place for floating point + 1 for 3
             return render_template('webpage.html', inp=time_limit, func_name="pi", out_val=pi_val, acc=str(accuracy-1))
         elif func_name == "e":
             time_limit = int(request.form['inp'])

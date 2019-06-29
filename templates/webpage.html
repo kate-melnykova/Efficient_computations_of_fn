@@ -3,44 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Online calculator</title>
-    <style>
-
-.topnav {
-  background-color: #333;
-  overflow: hidden;
-}
-
-
-.topnav a {
-  float: left;
-  color: #f2f2f2;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
-}
-
-.topnav a:hover {
-  background-color: #ddd;
-  color: black;
-}
-
-.topnav a.active {
-  background-color: #b3c6ff;
-  color: black;
-}
-
-.footer {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: #333;
-  color: white;
-  text-align: center;
-}
-</style>
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body style="background-color:#d1d1e0;">
 
@@ -61,46 +24,43 @@
 
     <h2 id="input" align="center">Enter the value</h2>
     <fieldset>
-<form action = "http://127.0.0.1:5000/" method = "POST">
-    <p><select name="func_name">
+<form method = "POST">
+    <p>
+        <select name="func_name">
         <option value = "factorial"> Factorial of </option>
         <option value = "pi"> &pi; over time (in sec) </option>
         <option value = "e"> e over time (in sec) </option>
     </select>
 
-    <input type="number" name="inp" min="1" max="10000" value="1" required/>
+    <input type="number" name="inp" min="1" max="10000" value="{% if inp %}{{inp}}{% else %}1{% endif %}" required/>
         and display first
-        <input type="number" name="n_digits" min="3" max="10000" value="10" required/> digits
+        <input type="number" name="n_digits" min="3" max="10000" value="{% if n_digits %}{{n_digits}}{% else %}1{% endif %}" required/> digits
     </p>
-    <!--<p>Pi up to <input type = "number" name = "pi" /> digits</p>-->
     <p><input type = "submit" name="submit_button" value = "submit" /></p>
 </form>
     </fieldset>
 
-{% if inp %}
+{% if out_val %}
 <fieldset>
 <h2 id="output" align="center">Computed values</h2>
-    {%if func_name == "factorial" %}
-        <form action = "http://127.0.0.1:5000/" method="POST">
-            <p>Factorial of {{inp}} equals {{out_val}}</p>
-        </form>
+    {%include '%s.html'% func_name %}
+
+    {#
     {% elif func_name == "pi" %}
-        <form action = "http://127.0.0.1:5000/" method="POST">
             <p>&pi; = {{out_val}}</p>
             <p>This value was computed with time limit {{inp}}</p>
             <p>Based on time limit, {{acc}}-many digits after the dot are accurate.</p>
-        </form>
     {% elif func_name == "e" %}
-        <form action = "http://127.0.0.1:5000/" method="POST">
             <p>e = {{out_val}}</p>
             <p>This value was computed with time limit {{inp}}</p>
-        </form>
     {% else %}
         <p>Unknown error </p>
     {% endif %}
+    #}
 </fieldset>
 {% endif %}
+    <p id="end"></p>
 </div>
-<div id="end" class="footer">Created in June 2019 by Kateryna Melnykova</div>
+<div class="footer">Created in June 2019 by Kateryna Melnykova</div>
 </body>
 </html>
