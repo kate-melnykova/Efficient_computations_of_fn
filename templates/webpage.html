@@ -7,12 +7,6 @@
 </head>
 <body style="background-color:#d1d1e0;">
 
-<!--{% if name %}
-  <h1>Hello {{ name }}!</h1>
-{% else %}
-  <h1>Hello, World!</h1>
-{% endif %}
--->
 <div class="topnav">
   <a class="active" href="#home">Home</a>
   <a href="#input">Enter input</a>
@@ -32,14 +26,38 @@
         <option value = "e"> e over time (in sec) </option>
     </select>
 
-    <input type="number" name="inp" min="1" max="10000" value="{% if inp %}{{inp}}{% else %}1{% endif %}" required/>
+    <input type="number" name="inp" min="2" max="10000" value="{% if inp %}{{inp}}{% else %}3{% endif %}" required/>
         and display first
-        <input type="number" name="n_digits" min="3" max="10000" value="{% if n_digits %}{{n_digits}}{% else %}1{% endif %}" required/> digits
+        <input type="number" name="n_digits" min="2" max="10000" value="{% if n_digits %}{{n_digits}}{% else %}3{% endif %}" required/> digits
     </p>
     <p><input type = "submit" name="submit_button" value = "submit" /></p>
 </form>
     </fieldset>
-
+</div>
+<div style="background-color:#e6e6ff; width=300px; max-width: 600px; margin: auto;">
+    <fieldset>
+        <h2 id="submitted" align="center">Submitted computations</h2>
+        <table>
+            <tr>
+                <th> ID </th>
+                <th> Function's type </th>
+                <th> Function's argument </th>
+                <th> Accuracy </th>
+                <th> Completed? </th>
+                <th> </th>
+            </tr>
+            <tr>
+                <th> 1 </th>
+                <th>  </th>
+                <th>  </th>
+                <th>  </th>
+                <th>  </th>
+                <th> </th>
+            </tr>
+        </table>
+    </fieldset>
+</div>
+<div style="background-color:#e6e6ff; width=300px; max-width: 600px; margin: auto;">
 {% if out_val %}
 <fieldset>
 <h2 id="output" align="center">Computed values</h2>
