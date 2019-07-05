@@ -1,7 +1,7 @@
 from time import time
 from decimal import Decimal
 from decimal import getcontext
-def compute_e(time_limit, n_digits):
+def compute_e(time_limit=10, n_digits=1000):
     """
     This function computes the Euler number e
     within given time_limit and displays
@@ -15,7 +15,7 @@ def compute_e(time_limit, n_digits):
     """
     start_time = time()
     # initialize
-    getcontext().prec = n_digits + 3
+    getcontext().prec = n_digits + 5
     e_val = 0
     two_n_plus_two = 2
     two_n_plus_one_fact_inv = Decimal(1)
@@ -31,8 +31,8 @@ def compute_e(time_limit, n_digits):
     return e_val
 
 if __name__ == '__main__':
-    factorial(input("Enter the integer: "))
-
+    #compute_e(input("Enter the integer: "))
+    pass
 
 
 

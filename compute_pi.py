@@ -8,7 +8,8 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
     :param n_digits:
     :return:
     """
-    start_time = time()
+    n_digits = int(n_digits)
+    max_time = time() + int(time_limit)
     #initialize
     getcontext().prec = n_digits + 3
     C = 426880 * Decimal(10005).sqrt()
@@ -22,7 +23,7 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
     Sum = Decimal(M * L) / X
 
     #run
-    while time() < start_time + float(time_limit):
+    while time() < max_time:
         M *= (K**3 - 16*K) // (idx + 1)**3
         K += 12
         idx += 1
@@ -32,16 +33,21 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
         term = Decimal(M * L) / X
         Sum += term
 
+        #print(str(term)[2:n_digits+3])
+        if round(term, n_digits+5) == 0:
+            break
+
     pi_val = C / Sum
-    pi_val = str(pi_val)[:n_digits]
+    pi_val = str(pi_val)[:n_digits+2]
     term = str(term)
     #accuracy = str(term).lstrip('-')
     accuracy = int(term[term.index('E')+2:])
-    #print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, n_digits, pi_val))
+    print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, n_digits, pi_val))
 
-    return Decimal(pi_val), accuracy
+    return Decimal(pi_val)#, accuracy
 
 
 if __name__ == '__main__':
     time_limit = input("Time limit in sec: ")
-    compute_pi(time_limit)
+    n_digits = input("Number of digits: ")
+    compute_pi(time_limit, n_digits)

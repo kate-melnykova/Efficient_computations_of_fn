@@ -1,11 +1,20 @@
+div {
+  background-color: #e6e6ff;
+  max-width: 80%;
+  margin: auto;
+}
+
 .topnav {
+  position: fixed;
+  width: 100%;
   background-color: #333;
   overflow: hidden;
+  color: white;
+  text-align: center;
 }
 
 
 .topnav a {
-  position: fixed;
   float: left;
   color: #f2f2f2;
   text-align: center;
@@ -39,6 +48,7 @@ table{
   border: 2px solid black;
   border-collapse: collapse;
 }
+
 
 th{
   border: 1px solid black;
