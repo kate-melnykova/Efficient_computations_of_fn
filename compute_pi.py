@@ -44,7 +44,7 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
     accuracy = int(term[term.index('E')+2:])
     print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, n_digits, pi_val))
 
-    return Decimal(pi_val)#, accuracy
+    return [Decimal(pi_val), accuracy]
 
 
 if __name__ == '__main__':

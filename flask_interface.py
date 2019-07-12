@@ -1,10 +1,14 @@
 import pandas as pd
+from flask_table import Table, Col
 from flask import Flask
 from flask import request
 from flask import render_template
 from factorial import factorial
 from compute_pi import compute_pi
 from compute_e import compute_e
+
+
+
 app = Flask(__name__)
 
 registry = {'factorial':factorial, 'pi':compute_pi, 'e':compute_e}
@@ -24,7 +28,8 @@ def implementation():
             computed = computed.iloc[1:,:].reset_index(drop=True)
         ID += 1
 
-        out_val = str(registry[func_name](inp_val, n_digits))
+        [out_val, accuracy] = registry[func_name](inp_val, n_digits)
+        out_val = str(out_val)
         computed.iloc[-1,4]="yes"
         #crop number if needed
         if len(out_val) > n_digits:
@@ -38,10 +43,10 @@ def implementation():
             out_val = out_val[:idx] + '\n ...' + out_val[idx:]
             idx += 70
         return render_template('webpage.html',tables=[computed.to_html(classes='data', header="true")],
-                               inp=inp_val, func_name=func_name, out_val=out_val)
+                               inp=inp_val, func_name=func_name, out_val=out_val, accuracy=accuracy)
     else:
         return render_template('webpage.html',tables=[computed.to_html(classes='data', header="true")],
-                               inp=None, func_name=None, out_val=None)
+                               inp=None, func_name=None, out_val=None, accuracy=None)
 
 
 

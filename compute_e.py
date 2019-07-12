@@ -13,6 +13,7 @@ def compute_e(time_limit=10, n_digits=1000):
     :param n_digits:
     :return: value of e
     """
+    n_digits = int(n_digits)
     start_time = time()
     # initialize
     getcontext().prec = n_digits + 5
@@ -20,19 +21,23 @@ def compute_e(time_limit=10, n_digits=1000):
     two_n_plus_two = 2
     two_n_plus_one_fact_inv = Decimal(1)
 
+    accuracy = 0
     #run
-    while time() < start_time + time_limit:
-        e_val += two_n_plus_two * two_n_plus_one_fact_inv
+    while time() < start_time + time_limit or accuracy >= n_digits:
+        term = two_n_plus_two * two_n_plus_one_fact_inv
+        e_val += term
         two_n_plus_one_fact_inv /= (two_n_plus_two * (two_n_plus_two + 1))
         two_n_plus_two += 2
         if two_n_plus_one_fact_inv == 0:
             break
+    term = str(term)
+    accuracy = int(term[term.index('E') + 2:])
 
-    return e_val
+    return [e_val, accuracy]
 
 if __name__ == '__main__':
-    #compute_e(input("Enter the integer: "))
-    pass
+    n_digits = input("Enter the number of digits of interest")
+    compute_e(3, n_digits)
 
 
 
