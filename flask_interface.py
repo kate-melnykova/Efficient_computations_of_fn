@@ -43,10 +43,10 @@ def implementation():
             out_val = out_val[:idx] + '\n ...' + out_val[idx:]
             idx += 70
         return render_template('webpage.html',tables=[computed.to_html(classes='data', header="true")],
-                               inp=inp_val, func_name=func_name, out_val=out_val, accuracy=accuracy)
+                               inp=inp_val, func_name=func_name, out_val=out_val, acc=accuracy)
     else:
         return render_template('webpage.html',tables=[computed.to_html(classes='data', header="true")],
-                               inp=None, func_name=None, out_val=None, accuracy=None)
+                               inp=None, func_name=None, out_val=None, acc=None)
 
 
 
