@@ -19,7 +19,7 @@
 
     <h2 id="input" align="center">Enter the value</h2>
     <fieldset>
-<form method = "POST">
+<form id="submit_computation" method = "POST">
     <p>
         <select name="func_name">
         <option value = "factorial"> Factorial of </option>
@@ -29,9 +29,12 @@
 
     <input type="number" name="inp" min="2" max="10000" value="{% if inp %}{{inp}}{% else %}3{% endif %}" required/>
         and display first
-        <input type="number" name="n_digits" min="2" max="10000" value="{% if n_digits %}{{n_digits}}{% else %}3{% endif %}" required/> digits
+        <input type="number" name="n_digits" min="2" max="10000" value="{% if n_digits %} {{n_digits}}
+                                                                        {% else %}3
+                                                                        {% endif %}" required/>
+        digits
     </p>
-    <p><input type = "submit" name="submit_button" value = "submit" /></p>
+    <p><input type="submit" name="submit_button" value = "submit" /></p>
 </form>
     </fieldset>
 </div>
@@ -55,7 +58,7 @@
             <td>
                 {% if  item[4] == "yes" %}
                     <form method="POST">
-                    <input id="historicalId" name="historicalId" type="hidden" value="{{item[0]}}">
+                    <input id="viewId" name="submit_button" type="hidden" value="{{ item[0] }}">
                     <button type="submit"> View results </button>
                     </form>
                 {% else %}
