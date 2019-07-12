@@ -38,9 +38,7 @@
 <div id="history">
     <fieldset>
         <h2 id="submitted" align="center">Submitted computations</h2>
-        {% for table in tables %}
-            {{ table | safe }}
-        {% endfor %}
+        {{ tables }}
     </fieldset>
 </div>
 <div>

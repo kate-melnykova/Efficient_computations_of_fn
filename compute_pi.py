@@ -1,7 +1,9 @@
 from decimal import Decimal
 from decimal import getcontext
 from time import time
-def compute_pi(time_limit=10,n_digits=1000)->float:
+
+
+def compute_pi(time_limit=10, n_digits=1000) -> float:
     """
     The implementation of the Chudnovsky algorithm
     https://en.wikipedia.org/wiki/Chudnovsky_algorithm
@@ -10,7 +12,7 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
     """
     n_digits = int(n_digits)
     max_time = time() + int(time_limit)
-    #initialize
+    # initialize
     getcontext().prec = n_digits + 3
     C = 426880 * Decimal(10005).sqrt()
     L = 13591409
@@ -33,14 +35,12 @@ def compute_pi(time_limit=10,n_digits=1000)->float:
         term = Decimal(M * L) / X
         Sum += term
 
-        #print(str(term)[2:n_digits+3])
         if round(term, n_digits+5) == 0:
             break
 
     pi_val = C / Sum
     pi_val = str(pi_val)[:n_digits+2]
     term = str(term)
-    #accuracy = str(term).lstrip('-')
     accuracy = int(term[term.index('E')+2:])
     print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, n_digits, pi_val))
 

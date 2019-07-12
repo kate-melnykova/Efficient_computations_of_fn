@@ -1,6 +1,8 @@
 from time import time
 from decimal import Decimal
 from decimal import getcontext
+
+
 def compute_e(time_limit=10, n_digits=1000):
     """
     This function computes the Euler number e
@@ -22,7 +24,7 @@ def compute_e(time_limit=10, n_digits=1000):
     two_n_plus_one_fact_inv = Decimal(1)
 
     accuracy = 0
-    #run
+    # run
     while time() < start_time + time_limit or accuracy >= n_digits:
         term = two_n_plus_two * two_n_plus_one_fact_inv
         e_val += term
@@ -34,6 +36,7 @@ def compute_e(time_limit=10, n_digits=1000):
     accuracy = int(term[term.index('E') + 2:])
 
     return [e_val, accuracy]
+
 
 if __name__ == '__main__':
     n_digits = input("Enter the number of digits of interest")

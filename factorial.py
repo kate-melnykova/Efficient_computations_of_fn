@@ -1,4 +1,6 @@
 from time import time
+
+
 def factorial(n: int, time_limit=10)->int:
     """
     :param n:
@@ -20,7 +22,7 @@ def factorial(n: int, time_limit=10)->int:
         factorial_val = n
         n = n - 1 # reduce to even number
 
-    list_integ = list(range(0,n+1,2))
+    list_integ = list(range(0, n+1, 2))
     acc = 1
     sums = [sum(list_integ[i:]) for i in range(int(n/2))]
     for i in range(int(n/2)):
