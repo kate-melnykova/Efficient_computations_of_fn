@@ -1,7 +1,8 @@
+from typing import Dict
 from time import time
 
 
-def factorial(n: int, time_limit=10)->int:
+def factorial(n: int, _, uuid : str, results : Dict) -> int:
     """
     :param n:
     :return: the value of n!
@@ -35,6 +36,14 @@ def factorial(n: int, time_limit=10)->int:
         acc = len(str(factorial_val))
     print(factorial_val)
     print(acc)
+
+
+    results[uuid] = {
+        'func_name': 'factorial',
+        'result': factorial_val,
+        'extra': acc
+    }
+
     return [factorial_val, acc]
 
 if __name__ == '__main__':

@@ -1,6 +1,10 @@
+from threading import Thread
+from uuid import uuid4
+
 from flask import Flask
 from flask import request
 from flask import render_template
+
 from factorial import factorial
 from compute_pi import compute_pi
 from compute_e import compute_e
@@ -8,9 +12,58 @@ from compute_e import compute_e
 
 app = Flask(__name__)
 
-registry = {'factorial': factorial, 'pi': compute_pi, 'e': compute_e}
+function_registry = {
+    'factorial': factorial,
+    'pi': compute_pi,
+    'e': compute_e
+}
+
+results = {}
+
 tables = []
 ID = 0
+
+
+
+@app.route('/', method=['GET'])
+def index():
+    return render_template('index.html')
+
+
+@app.route('/schedule_calculation', method=['POST'])
+def schedule_calculation():
+    assert request.method == 'POST'
+
+    # get parameters
+
+    func_name = request.form['func_name']
+    argument = request.form['argument']
+    accuracy = request.form['accuracy']
+
+    try:
+        func = function_registry[func_name]
+    except KeyError:
+        raise
+        # TODO (dmitry):  return message that we don't have such function
+
+    uuid = uuid4()
+
+    # create thread
+    thread = Thread(target=func, args=(arg, accuracy, uuid, results))
+
+    results[uuid] = {
+        'func_name': func_name,
+        'result': 'IN PROGRESS'
+    }
+
+    # start thread execution
+    thread.start()
+
+
+
+@app.route('/results', method=['GET'])
+def results():
+    return render_template('results.html', results=results)
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -53,7 +106,7 @@ def implementation():
                 tables[i][5] = out_val
                 tables[i][6] = accuracy
 
-            return render_template('webpage.html', tables=tables,
+            return render_template('index.html', tables=tables,
                                    inp=inp_val, func_name=func_name, out_val=out_val, acc=accuracy)
         else:
             # we need to figure out which form is submitted
@@ -63,14 +116,14 @@ def implementation():
                 if found:
                     break
             if found:
-                return render_template('webpage.html', tables=tables,
+                return render_template('index.html', tables=tables,
                                        inp=tables[i][2], func_name=tables[i][1],
                                        out_val=tables[i][5], acc=tables[i][6])
             else:
-                return render_template('webpage.html', tables=tables, inp=None, func_name=None,
+                return render_template('index.html', tables=tables, inp=None, func_name=None,
                                        out_val=None, acc=None)
     else:
-        return render_template('webpage.html', tables=tables,
+        return render_template('index.html', tables=tables,
                                inp=None, func_name=None, out_val=None, acc=None)
 
 

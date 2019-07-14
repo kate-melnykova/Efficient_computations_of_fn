@@ -19,24 +19,25 @@
 
     <h2 id="input" align="center">Enter the value</h2>
     <fieldset>
-<form id="submit_computation" method = "POST">
-    <p>
-        <select name="func_name">
-        <option value = "factorial"> Factorial of </option>
-        <option value = "pi"> &pi; over time (in sec) </option>
-        <option value = "e"> e over time (in sec) </option>
-    </select>
+        <form id="submit_computation" method="POST" action="/schedule_calculation">
+            <p>
+                <select name="func_name">
+                    <option value = "factorial"> Factorial of </option>
+                    <option value = "pi"> &pi; over time (in sec) </option>
+                    <option value = "e"> e over time (in sec) </option>
+                </select>
 
-    <input type="number" name="inp" min="2" max="10000" value="{% if inp %}{{inp}}{% else %}3{% endif %}" required/>
-        and display first
-        <input type="number" name="n_digits" min="2" max="10000" value="{% if n_digits %} {{n_digits}}
-                                                                        {% else %}3
-                                                                        {% endif %}" required/>
-        digits
-    </p>
-    <p><input type="submit" name="submit_button" value = "submit" /></p>
-</form>
+            <input type="number" name="argument" min="2" max="10000" value="{% if inp %}{{inp}}{% else %}3{% endif %}" required />
+                and display first
+                <input type="number" name="accuracy" min="2" max="10000" value="{% if n_digits %} {{n_digits}}
+                                                                                {% else %}3
+                                                                                {% endif %}" required/>
+                digits
+            </p>
+            <p><input type="submit" name="submit_button" value = "submit" /></p>
+        </form>
     </fieldset>
+
 </div>
 <div id="history">
     <fieldset>
