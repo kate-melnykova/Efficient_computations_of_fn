@@ -24,7 +24,6 @@ tables = []
 ID = 0
 
 
-
 @app.route('/', method=['GET'])
 def index():
     return render_template('index.html')
@@ -49,11 +48,15 @@ def schedule_calculation():
     uuid = uuid4()
 
     # create thread
-    thread = Thread(target=func, args=(arg, accuracy, uuid, results))
+    thread = Thread(target=func, args=(argument, accuracy, uuid, results))
 
     results[uuid] = {
         'func_name': func_name,
-        'result': 'IN PROGRESS'
+        'argument': argument,
+        'requested_accuracy': accuracy,
+        'result': 'IN PROGRESS',
+        'value': None,
+        'accuracy_achieved': None
     }
 
     # start thread execution
@@ -63,7 +66,9 @@ def schedule_calculation():
 
 @app.route('/results', method=['GET'])
 def results():
+
     return render_template('results.html', results=results)
+
 
 
 @app.route("/", methods=["POST", "GET"])

@@ -1,9 +1,10 @@
+from collections import defaultdict
 from decimal import Decimal
 from decimal import getcontext
 from time import time
 
 
-def compute_pi(time_limit=10, accuracy=1000) -> float:
+def compute_pi(time_limit, accuracy, uuid, results):
     """
     The implementation of the Chudnovsky algorithm
     https://en.wikipedia.org/wiki/Chudnovsky_algorithm
@@ -11,43 +12,47 @@ def compute_pi(time_limit=10, accuracy=1000) -> float:
     :return:
     """
     accuracy = int(accuracy)
-    max_time = time() + int(time_limit)
+    max_time = time() + float(time_limit)
+    getcontext().prec = accuracy + 300
+    print(getcontext())
+
     # initialize
-    getcontext().prec = accuracy + 3
-    C = 426880 * Decimal(10005).sqrt()
-    L = 13591409
-    X = 1
-    M = 1
-    K = 6
-    M = 1
+    c = Decimal('426880') * Decimal('10005').sqrt()
+    l = Decimal('13591409')
+    x = Decimal('1')
+    m = Decimal('1')
+    k = Decimal('6')
     idx = 1
 
-    Sum = Decimal(M * L) / X
+    sum_ = m * l / x
 
     #run
     while time() < max_time:
-        M *= (K**3 - 16*K) // (idx + 1)**3
-        K += 12
+        m *= (k**3 - 16*k) // (idx + 1)**3
+        k += 12
         idx += 1
 
-        L += 545140134
-        X *= -262537412640768000
-        term = Decimal(M * L) / X
-        Sum += term
-
-        if round(term, accuracy+5) == 0:
+        l += Decimal('545140134')
+        x *= Decimal('-262537412640768000')
+        term = round(m * l / x, accuracy + 3)
+        sum_ += term
+        # print(term)
+        if term == 0:
             break
 
-    pi_val = C / Sum
+    pi_val = c / sum_
     pi_val = str(pi_val)[:accuracy+2]
     term = str(term)
-    accuracy = int(term[term.index('E')+2:])
-    print("Pi(time={}, disp={} digits) = \n {}".format(time_limit, accuracy, pi_val))
+    accuracy_achieved = int(term[term.index('E')+2:])
 
-    return [Decimal(pi_val), accuracy]
+    print(pi_val)
+    print(accuracy_achieved)
+    results[uuid]['result'] = 'COMPLETED'
+    results[uuid]['value'] = pi_val
+    results[uuid]['accuracy_achieved'] = accuracy_achieved
 
 
 if __name__ == '__main__':
     time_limit = input("Time limit in sec: ")
     accuracy = input("Number of digits: ")
-    compute_pi(time_limit, accuracy)
+    compute_pi(time_limit, accuracy, "", defaultdict(dict))
