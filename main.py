@@ -1,3 +1,4 @@
+from collections import defaultdict
 from threading import Thread
 from uuid import uuid4
 
@@ -10,46 +11,65 @@ from compute_pi import compute_pi
 from compute_e import compute_e
 
 
+class Args:
+    def __init__(self):
+        self.argument = 3
+        self.time_limit = 3
+        self.accuracy = 3
+
+
 app = Flask(__name__)
 
 function_registry = {
-    'factorial': factorial,
-    'pi': compute_pi,
-    'e': compute_e
+    'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
+    'pi': [compute_pi],
+    'e': [compute_e]
 }
 
 results = {}
-
+args = Args()
 tables = []
 ID = 0
 
 
-@app.route('/', method=['GET'])
+@app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    return render_template('index.html', args=args)
 
 
-@app.route('/schedule_calculation', method=['POST'])
+@app.route('/schedule_calculation', methods=['POST'])
 def schedule_calculation():
+    global results
+    print('Before scheduling')
+    print(results)
     assert request.method == 'POST'
 
     # get parameters
 
     func_name = request.form['func_name']
-    argument = request.form['argument']
-    accuracy = request.form['accuracy']
-
     try:
-        func = function_registry[func_name]
+        func = function_registry[func_name][0]
+
     except KeyError:
         raise
         # TODO (dmitry):  return message that we don't have such function
 
-    uuid = uuid4()
+    uuid = str(uuid4())
+    print(str(uuid))
+
+    results[uuid] = dict()
+    results[uuid]['func_name'] = func
+    results[uuid]['result'] = 'IN PROGRESS'
+
+    # read all arguments
+    for item in function_registry[func_name][1:]:
+        print(item)
+        results[uuid][item] = request.form[item]
 
     # create thread
-    thread = Thread(target=func, args=(argument, accuracy, uuid, results))
+    thread = Thread(target=func, args=(uuid, results, function_registry[func_name][1:]))
 
+    """
     results[uuid] = {
         'func_name': func_name,
         'argument': argument,
@@ -58,17 +78,17 @@ def schedule_calculation():
         'value': None,
         'accuracy_achieved': None
     }
-
+    
+    """
+    print('Calculating scheduled')
+    print(results)
     # start thread execution
     thread.start()
 
 
-
-@app.route('/results', method=['GET'])
-def results():
-
-    return render_template('results.html', results=results)
-
+@app.route('/view_results', methods=['GET'])
+def view_results():
+    return render_template('view_results.html', results=results)
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -86,7 +106,7 @@ def implementation():
             id_loc = ID
             ID += 1
 
-            [out_val, accuracy] = registry[func_name](inp_val, n_digits)
+            [out_val, accuracy] = function_registry[func_name](inp_val, n_digits)
             out_val = str(out_val)
             tables[-1][4] = "yes"
 

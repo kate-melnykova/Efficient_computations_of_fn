@@ -18,68 +18,55 @@
 <div>
 
     <h2 id="input" align="center">Enter the value</h2>
-    <fieldset>
         <form id="submit_computation" method="POST" action="/schedule_calculation">
+            <fieldset>
+                <legend> Submit computations</legend>
             <p>
-                <select name="func_name">
-                    <option value = "factorial"> Factorial of </option>
-                    <option value = "pi"> &pi; over time (in sec) </option>
-                    <option value = "e"> e over time (in sec) </option>
-                </select>
-
-            <input type="number" name="argument" min="2" max="10000" value="{% if inp %}{{inp}}{% else %}3{% endif %}" required />
-                and display first
-                <input type="number" name="accuracy" min="2" max="10000" value="{% if n_digits %} {{n_digits}}
-                                                                                {% else %}3
-                                                                                {% endif %}" required/>
+                Compute factorial of <input type="number"
+                                    name="argument"
+                                    min="1" max="10000"
+                                    value="{% if args.argument_factorial %}{{args.argument_factorial}}{% else %}3{% endif %}"/>
+                over time <input type="number"
+                                 name="time_limit"
+                                 min="1" max="10000"
+                                 value="{% if args.time_limit_factorial %} {{args.time_limit_factorial}}{% else %}3{% endif %}" required/>
+                and show the first <input type="number"
+                                    name="accuracy"
+                                    min="1" max="10000"
+                                    value="{% if args.accuracy_factorial %} {{args.accuracy_factorial}}{% else %}3{% endif %}" required/>
                 digits
+                <input type="submit" name="func_name" value = "factorial" target="_blank"/>
             </p>
-            <p><input type="submit" name="submit_button" value = "submit" /></p>
+
+            <p>
+                Compute &pi; over time (in sec)
+                <input type="number"
+                       name="time_limit"
+                       min="1" max="10000"
+                       value="{% if args.time_limit_pi %} {{args.time_limit_pi}}{% else %}1{% endif %}" required/>
+                and show <input type="number"
+                                name="accuracy_pi"
+                                min="1" max="10000"
+                                value="{% if args.accuracy_pi %} {{args.accuracy_pi}}{% else %}3{% endif %}" required/>
+                digits
+                <input type="submit" name="func_name" value = "pi" target="_blank"/>
+            </p>
+
+            <p>
+                Compute e over time (in sec)
+                <input type="number"
+                       name="time_limit_e"
+                       min="1" max="10000"
+                       value="{% if args.time_limit_e %} {{args.time_limit_e}}{% else %}1{% endif %}" required/>
+                and show <input type="number"
+                                name="accuracy_e"
+                                min="1" max="10000"
+                                value="{% if args.accuracy_e %} {{args.accuracy_e}}{% else %}3{% endif %}" required/>
+                digits.
+                <input type="submit" name="func_name" value = "e" target="_blank"/>
+        </fieldset>
         </form>
-    </fieldset>
 
-</div>
-<div id="history">
-    <fieldset>
-        <h2 id="submitted" align="center">Submitted computations</h2>
-        <table>
-            <tr>
-                <td>ID</td>
-                <td>Function Name</td>
-                <td>Input</td>
-                <td>Parameter</td>
-                <td>Computed?</td>
-            </tr>
-        {% for item in tables %}
-            <tr>
-            <td>{{ item[0] }}</td>
-            <td>{{ item[1] }}</td>
-            <td>{{ item[2] }}</td>
-            <td>{{ item[3] }}</td>
-            <td>
-                {% if  item[4] == "yes" %}
-                    <form method="POST">
-                    <input id="viewId" name="submit_button" type="hidden" value="{{ item[0] }}">
-                    <button type="submit"> View results </button>
-                    </form>
-                {% else %}
-                    {{ item[4] }}
-                {% endif %}
-            </td>
-            </tr>
-
-            {% endfor %}
-        </table>
-    </fieldset>
-</div>
-<div>
-{% if out_val %}
-<fieldset>
-<h2 id="output" align="center">Computed values</h2>
-    {%include '%s.html'% func_name %}
-</fieldset>
-{% endif %}
-    <p id="end"></p>
 </div>
 <div class="footer">Created in July 2019</div>
 </body>
