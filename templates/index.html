@@ -8,11 +8,8 @@
 <body style="background-color:#d1d1e0;">
 
 <div class="topnav">
-  <a class="active" href="#home">Home</a>
-  <a href="#input">Enter input</a>
-    <a href="#history">History of computations</a>
-  <a href="#output">See output</a>
-  <a href="#end">End of the page</a>
+    <a class="active" href="./">Enter input</a>
+    <a href="./view_results">View results</a>
 </div>
 <h1 id="home" align="center">Online calculator</h1>
 <div>
@@ -43,11 +40,11 @@
                 <input type="number"
                        name="time_limit"
                        min="1" max="10000"
-                       value="{% if args.time_limit_pi %} {{args.time_limit_pi}}{% else %}1{% endif %}" required/>
+                       value="{% if args.time_limit %} {{args.time_limit}}{% else %}1{% endif %}" required/>
                 and show <input type="number"
-                                name="accuracy_pi"
+                                name="accuracy"
                                 min="1" max="10000"
-                                value="{% if args.accuracy_pi %} {{args.accuracy_pi}}{% else %}3{% endif %}" required/>
+                                value="{% if args.accuracy %} {{args.accuracy}}{% else %}3{% endif %}" required/>
                 digits
                 <input type="submit" name="func_name" value = "pi" target="_blank"/>
             </p>
@@ -68,6 +65,6 @@
         </form>
 
 </div>
-<div class="footer">Created in July 2019</div>
+<div class="footer" id="end">Created in July 2019</div>
 </body>
 </html>

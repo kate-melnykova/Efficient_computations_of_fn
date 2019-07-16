@@ -5,6 +5,7 @@ from uuid import uuid4
 from flask import Flask
 from flask import request
 from flask import render_template
+from flask import render_template_string
 
 from factorial import factorial
 from compute_pi import compute_pi
@@ -22,8 +23,8 @@ app = Flask(__name__)
 
 function_registry = {
     'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
-    'pi': [compute_pi],
-    'e': [compute_e]
+    'pi': [compute_pi, 'time_limit', 'accuracy'],
+    'e': [compute_e, 'time_limit', 'accuracy']
 }
 
 results = {}
@@ -40,8 +41,6 @@ def index():
 @app.route('/schedule_calculation', methods=['POST'])
 def schedule_calculation():
     global results
-    print('Before scheduling')
-    print(results)
     assert request.method == 'POST'
 
     # get parameters
@@ -58,40 +57,30 @@ def schedule_calculation():
     print(str(uuid))
 
     results[uuid] = dict()
-    results[uuid]['func_name'] = func
-    results[uuid]['result'] = 'IN PROGRESS'
+    results[uuid]['func_name'] = str(func.__name__)
+    results[uuid]['status'] = 'IN PROGRESS'
 
-    # read all arguments
+    # read all arguments and add it to results
     for item in function_registry[func_name][1:]:
-        print(item)
         results[uuid][item] = request.form[item]
 
     # create thread
     thread = Thread(target=func, args=(uuid, results, function_registry[func_name][1:]))
 
-    """
-    results[uuid] = {
-        'func_name': func_name,
-        'argument': argument,
-        'requested_accuracy': accuracy,
-        'result': 'IN PROGRESS',
-        'value': None,
-        'accuracy_achieved': None
-    }
-    
-    """
-    print('Calculating scheduled')
-    print(results)
     # start thread execution
     thread.start()
+
+    # return render_template('view_results.html', results=results)
+    return render_template('schedule_calculation.html')
 
 
 @app.route('/view_results', methods=['GET'])
 def view_results():
+    print(results)
     return render_template('view_results.html', results=results)
 
 
-@app.route("/", methods=["POST", "GET"])
+@app.route("/old_version", methods=["POST", "GET"])
 def implementation():
     global ID, tables
     if request.method == 'POST':

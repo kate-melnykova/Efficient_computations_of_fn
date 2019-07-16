@@ -7,10 +7,8 @@
 </head>
 <body style="background-color:#d1d1e0;">
 <div class="topnav">
-  <a href="./index.html">Enter input</a>
-    <a class="active" href="#history">Scheduled computations</a>
-  <a href="view_results.html">See output</a>
-  <a href="#end">End of the page</a>
+    <a href="./">Enter input</a>
+    <a class="active" href="./view_results">View results</a>
 </div>
 
 <div>
@@ -26,12 +24,21 @@
     </tr>
     {% for uuid in results %}
     <tr>
-        <td> results[uuid]['func_name'] </td>
+        <td> {{ results[uuid]['func_name'] }}</td>
         <td> {{ results[uuid]['argument'] }}</td>
         <td> {{ results[uuid]['time_limit'] }} </td>
         <td> {{ results[uuid]['accuracy'] }} </td>
         <td> {{ results[uuid]['status'] }} </td>
-        <td> Button will be added soon </td>
+        <td>
+            {% if results[uuid]['status'] == 'COMPLETED' %} <button name="View results"
+                                                                    type="submit"
+                                                                    value=uuid> View results </button>
+            {% else %} <button name="View results"
+                               type="submit"
+                                value=uuid
+                               disabled> Pending... </button>
+            {% endif %}
+        </td>
     </tr>
     {% endfor %}
 </table>
