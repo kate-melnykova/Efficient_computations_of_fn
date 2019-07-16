@@ -6,20 +6,18 @@ from decimal import getcontext
 
 def compute_e(uuid: str, results: dict, parameter_names: list):
     """
+    :param uuid: unique identifier of the string
+    :param results: global variable that keeps track of the progress
+    :param parameter_names: verifies all args' names that are passed to function
+
     This function computes the Euler number e
     within given time_limit and displays
     n_digits of it
 
     Here I use Brothers' Formulae
     https://www.intmath.com/exponential-logarithmic-functions/calculating-e.php
-    :param time_limit: time limit
-    :param accuracy: number of digits requested
-    :param uuid: unique identifier of computation
-    :param results: global file for tracking the progress
     """
     assert set(parameter_names) == set(['time_limit', 'accuracy'])
-
-    start_time = time()
 
     time_limit = float(results[uuid]['time_limit'])
     accuracy = int(results[uuid]['accuracy'])

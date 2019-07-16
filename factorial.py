@@ -7,7 +7,6 @@ def factorial(uuid: str, results: dict, parameter_names: list):
     :param uuid: unique identifier of the string
     :param results: global variable that keeps track of the progress
     :param parameter_names: verifies all args' names that are passed to function
-    :return: the value of n!
 
     The algorithm is given at
     https://pdfs.semanticscholar.org/7388/ef8a3fa31b2d01f2835b3beeccdb16c0616a.pdf
