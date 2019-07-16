@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scheduled calculations</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body style="background-color:#d1d1e0;">
+<div class="topnav">
+  <a href="./index.html">Enter input</a>
+    <a class="active" href="#history">Scheduled computations</a>
+  <a href="view_results.html">See output</a>
+  <a href="#end">End of the page</a>
+</div>
+
+<div>
+<h1 id="history" align="center">Scheduled computations</h1>
+<table>
+    <tr>
+        <td> <b> Function name </b> </td>
+        <td> <b> Argument(s) </b> </td>
+        <td> <b> Time limit </b> </td>
+        <td> <b> Accuracy requested </b> </td>
+        <td> <b> Current status </b> </td>
+        <td> <b> View results (if available) </b> </td>
+    </tr>
+    {% for uuid in results %}
+    <tr>
+        <td> results[uuid]['func_name'] </td>
+        <td> {{ results[uuid]['argument'] }}</td>
+        <td> {{ results[uuid]['time_limit'] }} </td>
+        <td> {{ results[uuid]['accuracy'] }} </td>
+        <td> {{ results[uuid]['status'] }} </td>
+        <td> Button will be added soon </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<div>
+    TODO: Add button for refreshing page
+</div>
+</body>
+<div class="footer" id="end">Created in July 2019</div>
+</html>
