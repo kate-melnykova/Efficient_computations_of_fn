@@ -15,10 +15,21 @@
 
 <h1 id="home" align="center">Online calculator</h1>
 <div>
-    <p>The Euler number e over time at most {{ result['time_limit'] }} equals </p>
-
-    <p align="center">{{ result['value'] }}</p>
-    <p> The achieved accuracy is 10^(-{{ result['accuracy_achieved'] }})</p>
+    {% if result['enough_time'] == 'no' %}
+        <fieldset>
+            <p> Not enough time.</p>
+            <p> Computed only {{ result['accuracy_achieved'] }} digits. </p>
+        </fieldset>
+    {% endif %}
+    <fieldset>
+        <p> The Euler number </p>
+        <p> e = {{ result['value'] }}</p>
+        {% else %}
+    </fieldset>
+    <fieldset>
+        <p> Requested time_limit = {{ result['time_limit'] }} </p>
+        <p> Digits of interest = {{ result['accuracy'] }}</p>
+    </fieldset>
 </div>
 
 <div class="footer" id="end">Created in July 2019</div>

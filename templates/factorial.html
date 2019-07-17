@@ -15,9 +15,17 @@
 
 <h1 id="home" align="center">Online calculator</h1>
 <div>
-    <p>Factorial of {{ result['argument'] }} over time at most {{ result['time_limit'] }} equals </p>
-
-    <p align="center">{{ result['value'] }}</p>
+    <fieldset>
+        {% if result['enough_time'] == 'yes' %}
+            <p>{{ result['argument'] }}! = {{ result['value'] }}</p>
+        {% else %}
+            <p> Not enough time.</p>
+        {% endif %}
+    </fieldset>
+    <fieldset>
+        <p> Requested time_limit = {{ result['time_limit'] }} </p>
+        <p> Digits of interest = {{ result['accuracy'] }}</p>
+    </fieldset>
 </div>
 
 <div class="footer" id="end">Created in July 2019</div>

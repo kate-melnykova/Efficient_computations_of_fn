@@ -48,7 +48,7 @@ def factorial(uuid: str, results: dict, parameter_names: list):
 
     # store results depending if there is enough time
     if enough_time:
-        results[uuid]['enough_time?'] = 'yes'
+        results[uuid]['enough_time'] = 'yes'
 
         # update factorial_val to keep accuracy-many digits
         factorial_val = str(factorial_val)
@@ -57,7 +57,7 @@ def factorial(uuid: str, results: dict, parameter_names: list):
 
         results[uuid]['value'] = factorial_val
     else:
-        results[uuid]['enough_time?'] = 'no'
+        results[uuid]['enough_time'] = 'no'
         results[uuid]['value'] = None
 
 
