@@ -28,11 +28,12 @@ def compute_e(uuid: str, results: dict, parameter_names: list):
     e_val = Decimal('0')
     two_n_plus_two = Decimal('2')
     two_n_plus_one_fact_inv = Decimal('1')
-    accuracy_achieved = 0
+    term = two_n_plus_two * two_n_plus_one_fact_inv
+    accuracy_achieved = accuracy
     enough_time = 'yes'
 
     # run
-    while accuracy_achieved >= accuracy:
+    while term != 0:
         if time() < max_time:
             term = two_n_plus_two * two_n_plus_one_fact_inv
             e_val += term
@@ -42,9 +43,12 @@ def compute_e(uuid: str, results: dict, parameter_names: list):
                 break
 
             term = str(term)
-            accuracy_achieved = int(term[term.index('E') + 2:])
         else:
             enough_time = 'no'
+            if 'E' in term:
+                accuracy_achieved = int(term[term.index('E') + 2:])
+            else:
+                accuracy_achieved = len(term) - len(term.lstrip('0'))
             break
 
     # save only true digits of e_val
@@ -62,7 +66,7 @@ if __name__ == '__main__':
     results = {'1': dict()}
     results[uuid]['time_limit'] = 3
     results[uuid]['accuracy'] = int(input('Enter the accuracy (number of digits displayed): '))
-    factorial(uuid, results, ['time_limit', 'accuracy'])
+    compute_e(uuid, results, ['time_limit', 'accuracy'])
     print(results)
 
 

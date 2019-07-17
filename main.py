@@ -3,6 +3,8 @@ from threading import Thread
 from uuid import uuid4
 
 from flask import Flask
+from flask import url_for
+from flask import redirect
 from flask import request
 from flask import render_template
 from flask import render_template_string
@@ -71,13 +73,21 @@ def schedule_calculation():
     thread.start()
 
     # return render_template('view_results.html', results=results)
-    return render_template('schedule_calculation.html')
+    # return render_template('schedule_calculation.html')
+    return redirect(url_for('view_results'))
 
 
 @app.route('/view_results', methods=['GET'])
 def view_results():
-    print(results)
     return render_template('view_results.html', results=results)
+
+
+# @app.route('/view_result<uuid>', methods=['GET'])
+@app.route('/result', methods=['GET'])
+def view_specific_results():
+    uuid = str(request.args.get('uuid', ''))
+    return render_template(f'{ results[uuid]["func_name"] }.html', result=results[uuid])
+    # return render_template_string(f'Shows result for {uuid}')
 
 
 @app.route("/old_version", methods=["POST", "GET"])

@@ -19,7 +19,6 @@ def compute_pi(uuid: str, results: dict, parameter_names: list):
 
     time_limit = float(results[uuid]['time_limit'])
     accuracy = int(results[uuid]['accuracy'])
-    max_time = time() + time_limit
     getcontext().prec = accuracy + 300
 
     # initialize
@@ -33,6 +32,7 @@ def compute_pi(uuid: str, results: dict, parameter_names: list):
     sum_ = m * l / x
 
     # run
+    max_time = time() + time_limit
     while time() < max_time:
         m *= (k**3 - 16*k) // (idx + 1)**3
         k += 12
@@ -42,7 +42,6 @@ def compute_pi(uuid: str, results: dict, parameter_names: list):
         x *= Decimal('-262537412640768000')
         term = round(m * l / x, accuracy + 3)
         sum_ += term
-        # print(term)
         if term == 0:
             enough_time = 'yes'
             break
@@ -50,7 +49,13 @@ def compute_pi(uuid: str, results: dict, parameter_names: list):
     pi_val = c / sum_
 
     term = str(term)
-    accuracy_achieved = int(term[term.index('E')+2:])
+    if enough_time:
+        accuracy_achieved = accuracy
+    else:
+        if 'E' in term:
+            accuracy_achieved = int(term[term.index('E') + 2:])
+        else:
+            accuracy_achieved = len(term) - len(term.lstrip('0'))
 
     # save only true digits of e_val
     pi_val = round(pi_val, accuracy_achieved)

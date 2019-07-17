@@ -15,9 +15,9 @@
 <div>
 
     <h2 id="input" align="center">Enter the value</h2>
+    <fieldset>
+        <legend> Submit computations</legend>
         <form id="submit_computation" method="POST" action="/schedule_calculation">
-            <fieldset>
-                <legend> Submit computations</legend>
             <p>
                 Compute factorial of <input type="number"
                                     name="argument"
@@ -34,35 +34,39 @@
                 digits
                 <input type="submit" name="func_name" value = "factorial" target="_blank"/>
             </p>
+        </form>
 
+        <form method="POST" action="/schedule_calculation">
             <p>
                 Compute &pi; over time (in sec)
                 <input type="number"
                        name="time_limit"
                        min="1" max="10000"
-                       value="{% if args.time_limit %} {{args.time_limit}}{% else %}1{% endif %}" required/>
+                       value="1" required/>
                 and show <input type="number"
                                 name="accuracy"
                                 min="1" max="10000"
-                                value="{% if args.accuracy %} {{args.accuracy}}{% else %}3{% endif %}" required/>
+                                value="3" required/>
                 digits
                 <input type="submit" name="func_name" value = "pi" target="_blank"/>
             </p>
+        </form>
 
+        <form method="POST" action="/schedule_calculation">
             <p>
                 Compute e over time (in sec)
                 <input type="number"
-                       name="time_limit_e"
+                       name="time_limit"
                        min="1" max="10000"
-                       value="{% if args.time_limit_e %} {{args.time_limit_e}}{% else %}1{% endif %}" required/>
+                       value="4" required/>
                 and show <input type="number"
-                                name="accuracy_e"
+                                name="accuracy"
                                 min="1" max="10000"
-                                value="{% if args.accuracy_e %} {{args.accuracy_e}}{% else %}3{% endif %}" required/>
+                                value="4" required/>
                 digits.
                 <input type="submit" name="func_name" value = "e" target="_blank"/>
-        </fieldset>
         </form>
+    </fieldset>
 
 </div>
 <div class="footer" id="end">Created in July 2019</div>

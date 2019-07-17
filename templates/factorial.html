@@ -1,1 +1,25 @@
-<p>Factorial of {{inp}} equals {{out_val}}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Online calculator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body style="background-color:#d1d1e0;">
+
+<div class="topnav">
+    <a href="./">Enter input</a>
+    <a href="./view_results">View results</a>
+</div>
+
+<h1 id="home" align="center">Online calculator</h1>
+<div>
+    <p>Factorial of {{ result['argument'] }} over time at most {{ result['time_limit'] }} equals </p>
+
+    <p align="center">{{ result['value'] }}</p>
+</div>
+
+<div class="footer" id="end">Created in July 2019</div>
+</body>
+</html>

@@ -13,35 +13,38 @@
 
 <div>
 <h1 id="history" align="center">Scheduled computations</h1>
-<table>
-    <tr>
-        <td> <b> Function name </b> </td>
-        <td> <b> Argument(s) </b> </td>
-        <td> <b> Time limit </b> </td>
-        <td> <b> Accuracy requested </b> </td>
-        <td> <b> Current status </b> </td>
-        <td> <b> View results (if available) </b> </td>
-    </tr>
-    {% for uuid in results %}
-    <tr>
-        <td> {{ results[uuid]['func_name'] }}</td>
-        <td> {{ results[uuid]['argument'] }}</td>
-        <td> {{ results[uuid]['time_limit'] }} </td>
-        <td> {{ results[uuid]['accuracy'] }} </td>
-        <td> {{ results[uuid]['status'] }} </td>
-        <td>
-            {% if results[uuid]['status'] == 'COMPLETED' %} <button name="View results"
-                                                                    type="submit"
-                                                                    value=uuid> View results </button>
-            {% else %} <button name="View results"
-                               type="submit"
-                                value=uuid
-                               disabled> Pending... </button>
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</table>
+
+    <form action="/result">
+        <table>
+            <tr>
+                <td> <b> Function name </b> </td>
+                <td> <b> Argument(s) </b> </td>
+                <td> <b> Time limit </b> </td>
+                <td> <b> Accuracy requested </b> </td>
+                <td> <b> Current status </b> </td>
+                <td> <b> View results (if available) </b> </td>
+            </tr>
+            {% for uuid in results %}
+            <tr>
+                <td> {{ results[uuid]['func_name'] }}</td>
+                <td> {{ results[uuid]['argument'] }}</td>
+                <td> {{ results[uuid]['time_limit'] }} </td>
+                <td> {{ results[uuid]['accuracy'] }} </td>
+                <td> {{ results[uuid]['status'] }} </td>
+                <td>
+                    {% if results[uuid]['status'] == 'COMPLETED' %} <button name="uuid"
+                                                                            type="submit"
+                                                                            value={{ uuid }}> View results </button>
+                    {% else %} <button name="uuid"
+                                       type="submit"
+                                       value={{ uuid }}
+                                       disabled> Pending... </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
 </div>
 
 <div>

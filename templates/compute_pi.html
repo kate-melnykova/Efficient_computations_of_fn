@@ -1,3 +1,26 @@
-<p>&pi; = {{out_val}}</p>
-<p>This value was computed with time limit {{inp}}</p>
-<p>Based on time limit, {{acc}}-many digits after the dot are accurate.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Online calculator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body style="background-color:#d1d1e0;">
+
+<div class="topnav">
+    <a href="./">Enter input</a>
+    <a href="./view_results">View results</a>
+</div>
+
+<h1 id="home" align="center">Online calculator</h1>
+<div>
+    <p>The Euler number e over time at most {{ result['time_limit'] }} equals </p>
+
+    <p align="center">{{ result['value'] }}</p>
+    <p> The achieved accuracy is 10^(-{{ result['accuracy_achieved'] }})</p>
+</div>
+
+<div class="footer" id="end">Created in July 2019</div>
+</body>
+</html>
