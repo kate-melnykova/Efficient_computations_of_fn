@@ -21,10 +21,9 @@
             <p> Computed only {{ result['accuracy_achieved'] }} digits. </p>
         </fieldset>
     {% endif %}
+
     <fieldset>
-        <p> The Euler number </p>
-        <p> e = {{ result['value'] }}</p>
-        {% else %}
+        <p> The Euler number e = {{ result['value'] }}</p>
     </fieldset>
     <fieldset>
         <p> Requested time_limit = {{ result['time_limit'] }} </p>
