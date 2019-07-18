@@ -1,4 +1,4 @@
-from collections import defaultdict
+from time import time
 from threading import Thread
 from uuid import uuid4
 
@@ -61,6 +61,13 @@ def schedule_calculation():
     results[uuid] = dict()
     results[uuid]['func_name'] = str(func.__name__)
     results[uuid]['status'] = 'IN PROGRESS'
+    results[uuid]['start_time'] = time()
+
+    # remove the oldest computation if needed
+    if len(results) > 10:
+        oldest_uuid = min(([results[uuid_]['start_time'], uuid_] for uuid_ in results.keys()))
+        oldest_uuid = oldest_uuid[1]
+        del results[oldest_uuid]
 
     # read all arguments and add it to results
     for item in function_registry[func_name][1:]:
