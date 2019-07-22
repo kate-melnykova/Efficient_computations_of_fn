@@ -2,6 +2,8 @@ from time import time
 from threading import Thread
 from uuid import uuid4
 
+from celery import Celery
+from celery import shared_task
 from flask import Flask
 from flask import url_for
 from flask import redirect
@@ -9,9 +11,9 @@ from flask import request
 from flask import render_template
 from flask import render_template_string
 
-from factorial import factorial
-from compute_pi import compute_pi
-from compute_e import compute_e
+from .factorial import factorial
+from .compute_pi import compute_pi
+from .compute_e import compute_e
 
 
 class Args:
@@ -22,6 +24,21 @@ class Args:
 
 
 app = Flask(__name__)
+app.config['broker_url'] = 'amqp://rabbitmq:5672//'
+app.config['result_backend'] = 'redis://redis:6379'
+
+celery = Celery(app.name, broker=app.config['broker_url'])
+celery.conf.update(app.config)
+
+"""
+@celery.task(shared=True)
+def addition(a=2, b=3):
+    time.sleep(1)
+    num = a + b
+    print(f"Ended shared_task, answer = {num}")
+    return num
+"""
+
 
 function_registry = {
     'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],

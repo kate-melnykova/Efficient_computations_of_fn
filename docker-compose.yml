@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+
+  redis:
+    image: bitnami/redis:latest
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+
+  web: &web
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./calcs:/app
+    command: flask run --debugger --host=0.0.0.0
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+    depends_on:
+      - redis
+      - rabbitmq
+      - celery-worker
+
+  celery-worker:
+    <<: *web
+    ports: []
+    command: celery -A main.celery worker -l info
+    depends_on:
+      - redis
+      - rabbitmq
+
+volumes:
+  pgdata:
