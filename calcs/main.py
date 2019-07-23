@@ -1,5 +1,6 @@
 from time import time
 from threading import Thread
+import os
 from uuid import uuid4
 
 from celery import Celery
@@ -11,9 +12,13 @@ from flask import request
 from flask import render_template
 from flask import render_template_string
 
-from .factorial import factorial
+#from app import factorial
+from factorial import factorial
 from .compute_pi import compute_pi
 from .compute_e import compute_e
+
+print(os.getcwd())
+print(os.listdir())
 
 
 class Args:
@@ -57,6 +62,13 @@ def index():
     return render_template('index.html', args=args)
 
 
+@celery.task(shared=True)
+def function_implementation(func_name, uuid, results, arg_names):
+    print("We are here")
+    func = function_registry[func_name][0]
+    func(uuid, results, arg_names)
+
+
 @app.route('/schedule_calculation', methods=['POST'])
 def schedule_calculation():
     global results
@@ -73,7 +85,6 @@ def schedule_calculation():
         # TODO (dmitry):  return message that we don't have such function
 
     uuid = str(uuid4())
-    print(str(uuid))
 
     results[uuid] = dict()
     results[uuid]['func_name'] = str(func.__name__)
@@ -90,14 +101,16 @@ def schedule_calculation():
     for item in function_registry[func_name][1:]:
         results[uuid][item] = request.form[item]
 
+    """
     # create thread
     thread = Thread(target=func, args=(uuid, results, function_registry[func_name][1:]))
 
     # start thread execution
     thread.start()
+    """
 
-    # return render_template('view_results.html', results=results)
-    # return render_template('schedule_calculation.html')
+    function_implementation.delay(func_name, uuid, results, function_registry[func_name][1:])
+
     return redirect(url_for('view_results'))
 
 
@@ -111,7 +124,6 @@ def view_results():
 def view_specific_results():
     uuid = str(request.args.get('uuid', ''))
     return render_template(f'{ results[uuid]["func_name"] }.html', result=results[uuid])
-    # return render_template_string(f'Shows result for {uuid}')
 
 
 @app.route("/old_version", methods=["POST", "GET"])

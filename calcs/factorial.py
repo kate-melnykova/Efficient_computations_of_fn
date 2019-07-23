@@ -12,7 +12,6 @@ def factorial(uuid: str, results: dict, parameter_names: list):
     https://pdfs.semanticscholar.org/7388/ef8a3fa31b2d01f2835b3beeccdb16c0616a.pdf
     """
     assert set(parameter_names) == set(['argument', 'time_limit', 'accuracy'])
-
     n = int(results[uuid]['argument'])
     time_limit = float(results[uuid]['time_limit'])
     accuracy = int(results[uuid]['accuracy'])
