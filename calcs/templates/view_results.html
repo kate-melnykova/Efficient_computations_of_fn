@@ -24,20 +24,20 @@
                 <td> <b> Current status </b> </td>
                 <td> <b> View results (if available) </b> </td>
             </tr>
-            {% for uuid in results %}
+            {% for task_id in results %}
             <tr>
-                <td> {{ results[uuid]['func_name'] }}</td>
-                <td> {{ results[uuid]['argument'] }}</td>
-                <td> {{ results[uuid]['time_limit'] }} </td>
-                <td> {{ results[uuid]['accuracy'] }} </td>
-                <td> {{ results[uuid]['status'] }} </td>
+                <td> {{ results[task_id]['func_name'] }}</td>
+                <td> {{ results[task_id]['argument'] }}</td>
+                <td> {{ results[task_id]['time_limit'] }} </td>
+                <td> {{ results[task_id]['accuracy'] }} </td>
+                <td> {{ results[task_id]['status'] }} </td>
                 <td>
-                    {% if results[uuid]['status'] == 'COMPLETED' %} <button name="uuid"
+                    {% if results[task_id]['status'] == 'COMPLETED' %} <button name="task_id"
                                                                             type="submit"
-                                                                            value={{ uuid }}> View results </button>
-                    {% else %} <button name="uuid"
+                                                                            value={{ task_id }}> View results </button>
+                    {% else %} <button name="task_id"
                                        type="submit"
-                                       value={{ uuid }}
+                                       value={{ task_id }}
                                        disabled> Pending... </button>
                     {% endif %}
                 </td>

@@ -90,96 +90,43 @@ def schedule_calculation():
     for item in function_registry[func_name][1:]:
         results[uuid][item] = request.form[item]
 
-    function_implementation.delay(func_name, uuid, results, function_registry[func_name][1:])
+    function_implementation.delay(func_name,
+                                  uuid,
+                                  results,
+                                  function_registry[func_name][1:])
 
     return redirect(url_for('view_results'))
 
 
 @app.route('/view_results', methods=['GET'])
 def view_results():
-    r = Redis(host='redis', port=6379, db=0)
+    r = Redis(host='redis',
+              port=6379,
+              db=0)
     results_temp = {}
     for key in r.keys('*'):
         result = json.loads(r.get(key))
         task_id = result['task_id']
         result = result['result']
         results_temp[task_id] = result
-    return render_template('view_results.html', results=results_temp)
+    return render_template('view_results.html',
+                           results=results_temp)
 
 
 # @app.route('/view_result<uuid>', methods=['GET'])
 @app.route('/result', methods=['GET'])
 def view_specific_results():
-    task_id = str(request.args.get('uuid', ''))
-    r = Redis(host='redis', port=6379, db=0)
-    results_temp = {}
+    task_id = str(request.args.get('task_id', ''))
+    r = Redis(host='redis',
+              port=6379,
+              db=0)
     for key in r.keys('*'):
         result = json.loads(r.get(key))
-        task_id = result['task_id']
-        result = result['result']
-        results_temp[task_id] = result
-    return render_template(f'{ results[uuid]["func_name"] }.html', result=results[uuid])
-
-
-@app.route("/old_version", methods=["POST", "GET"])
-def implementation():
-    global ID, tables
-    if request.method == 'POST':
-        if request.form['submit_button'] == 'submit':
-            func_name = request.form["func_name"]
-            inp_val = int(request.form['inp'])
-            n_digits = int(request.form['n_digits'])
-
-            tables.append([ID, func_name, inp_val, n_digits, "Computing...", "", ""])
-            if len(tables) > 10:
-                del tables[0]
-            id_loc = ID
-            ID += 1
-
-            [out_val, accuracy] = function_registry[func_name](inp_val, n_digits)
-            out_val = str(out_val)
-            tables[-1][4] = "yes"
-
-            # crop number if needed
-            if len(out_val) > n_digits:
-                if "." not in out_val[:n_digits]:
-                    out_val = out_val[:n_digits+1] + "E+" + str(len(out_val)-n_digits)
-                else:
-                    out_val = out_val[:n_digits + 2]
-
-            idx = 70
-            while idx < len(out_val):
-                out_val = out_val[:idx] + '\n ...' + out_val[idx:]
-                idx += 70
-
-            #find row with ID = id_loc
-            for i in range(len(tables)):
-                found = tables[i][0] == id_loc
-                if found:
-                    break
-            if found:
-                tables[i][5] = out_val
-                tables[i][6] = accuracy
-
-            return render_template('index.html', tables=tables,
-                                   inp=inp_val, func_name=func_name, out_val=out_val, acc=accuracy)
-        else:
-            # we need to figure out which form is submitted
-            id_view = request.form['submit_button']
-            for i in range(len(tables)):
-                found = tables[i][0] == int(id_view)
-                if found:
-                    break
-            if found:
-                return render_template('index.html', tables=tables,
-                                       inp=tables[i][2], func_name=tables[i][1],
-                                       out_val=tables[i][5], acc=tables[i][6])
-            else:
-                return render_template('index.html', tables=tables, inp=None, func_name=None,
-                                       out_val=None, acc=None)
-    else:
-        return render_template('index.html', tables=tables,
-                               inp=None, func_name=None, out_val=None, acc=None)
+        if task_id == result['task_id']:
+            result = result['result']
+            return render_template(f'{ result["func_name"] }.html',
+                                   result=result)
+    return "Task not found"
 
 
     """
@@ -188,4 +135,8 @@ def implementation():
 
     # start thread execution
     thread.start()
+    """
+
+    """
+    curl -X POST -d 'func_name=factorial' -d 'argument=3' -d 'time_limit=1' -d 'accuracy=10' http://0.0.0.0:5000/schedule_calculation --verbose
     """
