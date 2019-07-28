@@ -52,16 +52,14 @@ def index():
 
 
 @celery.task
-def function_implementation(func_name, uuid, results, arg_names):
-    print("We are here")
+def function_implementation(func_name, arguments, arg_names):
     func = function_registry[func_name][0]
-    func(uuid, results, arg_names)
-    return results[uuid]
+    func(arguments, arg_names)
+    return arguments
 
 
 @app.route('/schedule_calculation', methods=['POST'])
 def schedule_calculation():
-    global results
     assert request.method == 'POST'
 
     # get parameters
@@ -75,24 +73,17 @@ def schedule_calculation():
 
     uuid = str(uuid4())
 
-    results[uuid] = dict()
-    results[uuid]['func_name'] = str(func.__name__)
-    results[uuid]['status'] = 'IN PROGRESS'
-    results[uuid]['start_time'] = time()
-
-    # remove the oldest computation if needed
-    if len(results) > 10:
-        oldest_uuid = min(([results[uuid_]['start_time'], uuid_] for uuid_ in results.keys()))
-        oldest_uuid = oldest_uuid[1]
-        del results[oldest_uuid]
+    arguments = dict()
+    arguments['func_name'] = str(func.__name__)
+    arguments['status'] = 'IN PROGRESS'
+    arguments['start_time'] = time()
 
     # read all arguments and add it to results
     for item in function_registry[func_name][1:]:
-        results[uuid][item] = request.form[item]
+        arguments[item] = request.form[item]
 
     function_implementation.delay(func_name,
-                                  uuid,
-                                  results,
+                                  arguments,
                                   function_registry[func_name][1:])
 
     return redirect(url_for('view_results'))
@@ -109,6 +100,7 @@ def view_results():
         task_id = result['task_id']
         result = result['result']
         results_temp[task_id] = result
+        print(result)
     return render_template('view_results.html',
                            results=results_temp)
 

@@ -4,7 +4,7 @@ from decimal import getcontext
 from time import time
 
 
-def compute_pi(uuid: str, results: dict, parameter_names: list):
+def compute_pi(arguments: dict, parameter_names: list):
     """
     :param uuid: unique identifier of the string
     :param results: global variable that keeps track of the progress
@@ -17,8 +17,8 @@ def compute_pi(uuid: str, results: dict, parameter_names: list):
     """
     assert set(parameter_names) == set(['time_limit', 'accuracy'])
 
-    time_limit = float(results[uuid]['time_limit'])
-    accuracy = int(results[uuid]['accuracy'])
+    time_limit = float(arguments['time_limit'])
+    accuracy = int(arguments['accuracy'])
     getcontext().prec = accuracy + 300
 
     # initialize
@@ -61,16 +61,7 @@ def compute_pi(uuid: str, results: dict, parameter_names: list):
     pi_val = round(pi_val, accuracy_achieved)
 
     # save results
-    results[uuid]['status'] = 'COMPLETED'
-    results[uuid]['value'] = pi_val
-    results[uuid]['enough_time'] = enough_time
-    results[uuid]['accuracy_achieved'] = accuracy_achieved
-
-
-if __name__ == '__main__':
-    uuid = '1'
-    results = {'1': dict()}
-    results[uuid]['time_limit'] = 3
-    results[uuid]['accuracy'] = int(input('Enter the accuracy (number of digits displayed): '))
-    compute_pi(uuid, results, ['time_limit', 'accuracy'])
-    print(results)
+    arguments['status'] = 'COMPLETED'
+    arguments['value'] = pi_val
+    arguments['enough_time'] = enough_time
+    arguments['accuracy_achieved'] = accuracy_achieved
