@@ -11,15 +11,13 @@ from flask import redirect
 from flask import request
 from flask import render_template
 from flask import render_template_string
+import json
+from redis import Redis
 
 #from app import factorial
 from factorial import factorial
-from .compute_pi import compute_pi
-from .compute_e import compute_e
-
-print(os.getcwd())
-print(os.listdir())
-
+from compute_pi import compute_pi
+from compute_e import compute_e
 
 class Args:
     def __init__(self):
@@ -34,15 +32,6 @@ app.config['result_backend'] = 'redis://redis:6379'
 
 celery = Celery(app.name, broker=app.config['broker_url'])
 celery.conf.update(app.config)
-
-"""
-@celery.task(shared=True)
-def addition(a=2, b=3):
-    time.sleep(1)
-    num = a + b
-    print(f"Ended shared_task, answer = {num}")
-    return num
-"""
 
 
 function_registry = {
@@ -62,11 +51,12 @@ def index():
     return render_template('index.html', args=args)
 
 
-@celery.task(shared=True)
+@celery.task
 def function_implementation(func_name, uuid, results, arg_names):
     print("We are here")
     func = function_registry[func_name][0]
     func(uuid, results, arg_names)
+    return results[uuid]
 
 
 @app.route('/schedule_calculation', methods=['POST'])
@@ -75,7 +65,6 @@ def schedule_calculation():
     assert request.method == 'POST'
 
     # get parameters
-
     func_name = request.form['func_name']
     try:
         func = function_registry[func_name][0]
@@ -101,14 +90,6 @@ def schedule_calculation():
     for item in function_registry[func_name][1:]:
         results[uuid][item] = request.form[item]
 
-    """
-    # create thread
-    thread = Thread(target=func, args=(uuid, results, function_registry[func_name][1:]))
-
-    # start thread execution
-    thread.start()
-    """
-
     function_implementation.delay(func_name, uuid, results, function_registry[func_name][1:])
 
     return redirect(url_for('view_results'))
@@ -116,13 +97,27 @@ def schedule_calculation():
 
 @app.route('/view_results', methods=['GET'])
 def view_results():
-    return render_template('view_results.html', results=results)
+    r = Redis(host='redis', port=6379, db=0)
+    results_temp = {}
+    for key in r.keys('*'):
+        result = json.loads(r.get(key))
+        task_id = result['task_id']
+        result = result['result']
+        results_temp[task_id] = result
+    return render_template('view_results.html', results=results_temp)
 
 
 # @app.route('/view_result<uuid>', methods=['GET'])
 @app.route('/result', methods=['GET'])
 def view_specific_results():
-    uuid = str(request.args.get('uuid', ''))
+    task_id = str(request.args.get('uuid', ''))
+    r = Redis(host='redis', port=6379, db=0)
+    results_temp = {}
+    for key in r.keys('*'):
+        result = json.loads(r.get(key))
+        task_id = result['task_id']
+        result = result['result']
+        results_temp[task_id] = result
     return render_template(f'{ results[uuid]["func_name"] }.html', result=results[uuid])
 
 
@@ -187,5 +182,10 @@ def implementation():
                                inp=None, func_name=None, out_val=None, acc=None)
 
 
-if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    """
+    # create thread
+    thread = Thread(target=func, args=(uuid, results, function_registry[func_name][1:]))
+
+    # start thread execution
+    thread.start()
+    """

@@ -8,6 +8,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir /app
+RUN echo $PYTHONPATH
 
 WORKDIR /app
 
@@ -15,6 +16,9 @@ COPY calcs/ .
 
 RUN pip install --upgrade pip
 RUN pip install -U -r requirements.txt
+
+ENV PYTHONPATH "${PYTHONPATH}:/app"
+RUN echo $PYTHONPATH
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN dos2unix /usr/local/bin/entrypoint.sh && \
