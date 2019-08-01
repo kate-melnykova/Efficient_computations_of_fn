@@ -1,38 +1,30 @@
 from time import time
-from threading import Thread
-import os
 from uuid import uuid4
 
 from celery import Celery
-from celery import shared_task
 from flask import Flask
 from flask import url_for
 from flask import redirect
 from flask import request
 from flask import render_template
-from flask import render_template_string
 import json
 from redis import Redis
 
-#from app import factorial
 from factorial import factorial
 from compute_pi import compute_pi
 from compute_e import compute_e
 
-class Args:
-    def __init__(self):
-        self.argument = 3
-        self.time_limit = 3
-        self.accuracy = 3
+from sci_funcs.tasks import functio
 
 
 app = Flask(__name__)
 app.config['broker_url'] = 'amqp://rabbitmq:5672//'
 app.config['result_backend'] = 'redis://redis:6379'
+app.config['imports'] = ['sci_funcs.tasks']
 
 celery = Celery(app.name, broker=app.config['broker_url'])
 celery.conf.update(app.config)
-
+celery.set_default()
 
 function_registry = {
     'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
@@ -40,18 +32,15 @@ function_registry = {
     'e': [compute_e, 'time_limit', 'accuracy']
 }
 
-results = {}
-args = Args()
-tables = []
-ID = 0
+args = {}
 
-
+# TODO: remove args from index page
 @app.route('/', methods=['GET'])
 def index():
     return render_template('index.html', args=args)
 
 
-@celery.task
+@celery.task(shared=True)
 def function_implementation(func_name, arguments, arg_names):
     func = function_registry[func_name][0]
     func(arguments, arg_names)
@@ -74,6 +63,7 @@ def schedule_calculation():
     uuid = str(uuid4())
 
     arguments = dict()
+    # TODO: fix
     arguments['func_name'] = str(func.__name__)
     arguments['status'] = 'IN PROGRESS'
     arguments['start_time'] = time()
@@ -82,10 +72,12 @@ def schedule_calculation():
     for item in function_registry[func_name][1:]:
         arguments[item] = request.form[item]
 
-    function_implementation.delay(func_name,
-                                  arguments,
-                                  function_registry[func_name][1:])
-
+    # get task identifier
+    task_id = functio.delay(func_name, arguments, function_registry[func_name][1:])
+    r = Redis(host='redis',
+              port=6379,
+              db=0)
+    r.set(task_id, '')  # TODO: check syntax -- serialize the line using json.dumps
     return redirect(url_for('view_results'))
 
 
@@ -97,10 +89,16 @@ def view_results():
     results_temp = {}
     for key in r.keys('*'):
         result = json.loads(r.get(key))
-        task_id = result['task_id']
-        result = result['result']
-        results_temp[task_id] = result
-        print(result)
+        if 'result' in result:
+            # celery worker result
+            task_id = result['task_id']
+            result = result['result']
+            results_temp[task_id] = result
+        else:
+            # in progress
+            result_temp[task_id] = {}
+            # TODO: status is Pending
+
     return render_template('view_results.html',
                            results=results_temp)
 
