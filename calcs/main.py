@@ -26,30 +26,21 @@ celery = Celery(app.name, broker=app.config['broker_url'])
 celery.conf.update(app.config)
 celery.set_default()
 
-function_registry = {
-    'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
-    'pi': [compute_pi, 'time_limit', 'accuracy'],
-    'e': [compute_e, 'time_limit', 'accuracy']
-}
 
-args = {}
-
-# TODO: remove args from index page
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', args=args)
-
-
-@celery.task(shared=True)
-def function_implementation(func_name, arguments, arg_names):
-    func = function_registry[func_name][0]
-    func(arguments, arg_names)
-    return arguments
+    return render_template('index.html')
 
 
 @app.route('/schedule_calculation', methods=['POST'])
 def schedule_calculation():
     assert request.method == 'POST'
+
+    function_registry = {
+        'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
+        'pi': [compute_pi, 'time_limit', 'accuracy'],
+        'e': [compute_e, 'time_limit', 'accuracy']
+    }
 
     # get parameters
     func_name = request.form['func_name']
@@ -73,11 +64,15 @@ def schedule_calculation():
         arguments[item] = request.form[item]
 
     # get task identifier
-    task_id = functio.delay(func_name, arguments, function_registry[func_name][1:])
+    async_result = functio.delay(func_name, arguments, function_registry[func_name][1:])
+    print('Async_result', async_result)
+    print('Type of task_id', async_result.task_id, type(async_result.task_id))
     r = Redis(host='redis',
               port=6379,
               db=0)
-    r.set(task_id, '')  # TODO: check syntax -- serialize the line using json.dumps
+    message = json.dumps(arguments)
+    # r.set(b''.join(['celery-task-meta-',async_result.task_id]), json.dumps(''))
+    # TODO: check syntax -- serialize the line using json.dumps
     return redirect(url_for('view_results'))
 
 
@@ -88,16 +83,20 @@ def view_results():
               db=0)
     results_temp = {}
     for key in r.keys('*'):
-        result = json.loads(r.get(key))
-        if 'result' in result:
+        print('Pickled', r.get(key))
+        try:
+            result = json.loads(r.get(key))
+            print('Unpickled', result)
+            # if 'result' in result:
             # celery worker result
             task_id = result['task_id']
             result = result['result']
             results_temp[task_id] = result
-        else:
+        except:
             # in progress
-            result_temp[task_id] = {}
+            # results_temp[task_id] = {}
             # TODO: status is Pending
+            pass
 
     return render_template('view_results.html',
                            results=results_temp)

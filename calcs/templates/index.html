@@ -22,15 +22,15 @@
                 Compute factorial of <input type="number"
                                     name="argument"
                                     min="1" max="10000"
-                                    value="{% if args.argument_factorial %}{{args.argument_factorial}}{% else %}3{% endif %}"/>
+                                    value="3"/>
                 over time <input type="number"
                                  name="time_limit"
                                  min="1" max="10000"
-                                 value="{% if args.time_limit_factorial %} {{args.time_limit_factorial}}{% else %}3{% endif %}" required/>
+                                 value="3" required/>
                 and show the first <input type="number"
                                     name="accuracy"
                                     min="1" max="10000"
-                                    value="{% if args.accuracy_factorial %} {{args.accuracy_factorial}}{% else %}3{% endif %}" required/>
+                                    value="3" required/>
                 digits
                 <button type="submit" name="func_name" value = "factorial" target="_blank"> Submit </button>
             </p>
