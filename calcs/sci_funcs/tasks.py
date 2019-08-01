@@ -1,18 +1,14 @@
 from celery import shared_task
 
-from factorial import factorial
-from compute_pi import compute_pi
-from compute_e import compute_e
-
-function_registry = {
-    'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
-    'pi': [compute_pi, 'time_limit', 'accuracy'],
-    'e': [compute_e, 'time_limit', 'accuracy']
-}
+from sci_funcs.function_registry import function_registry
+from sci_funcs.factorial import factorial
+from sci_funcs.compute_pi import compute_pi
+from sci_funcs.compute_e import compute_e
 
 
 @shared_task
-def functio(func_name, arguments, arg_names):
+def functio(arguments, arg_names):
+    func_name = arguments['func_name']
     func = function_registry[func_name][0]
     func(arguments, arg_names)
     return arguments

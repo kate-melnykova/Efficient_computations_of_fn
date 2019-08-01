@@ -10,11 +10,12 @@ from flask import render_template
 import json
 from redis import Redis
 
-from factorial import factorial
-from compute_pi import compute_pi
-from compute_e import compute_e
+# from factorial import factorial
+# from compute_pi import compute_pi
+# from compute_e import compute_e
 
 from sci_funcs.tasks import functio
+from sci_funcs.function_registry import function_registry
 
 
 app = Flask(__name__)
@@ -36,35 +37,18 @@ def index():
 def schedule_calculation():
     assert request.method == 'POST'
 
-    function_registry = {
-        'factorial': [factorial, 'argument', 'time_limit', 'accuracy'],
-        'pi': [compute_pi, 'time_limit', 'accuracy'],
-        'e': [compute_e, 'time_limit', 'accuracy']
-    }
-
-    # get parameters
     func_name = request.form['func_name']
-    try:
-        func = function_registry[func_name][0]
-
-    except KeyError:
-        raise
-        # TODO (dmitry):  return message that we don't have such function
-
-    uuid = str(uuid4())
+    assert func_name in function_registry
 
     arguments = dict()
-    # TODO: fix
-    arguments['func_name'] = str(func.__name__)
+    arguments['func_name'] = func_name
     arguments['status'] = 'IN PROGRESS'
     arguments['start_time'] = time()
-
-    # read all arguments and add it to results
     for item in function_registry[func_name][1:]:
         arguments[item] = request.form[item]
 
     # get task identifier
-    async_result = functio.delay(func_name, arguments, function_registry[func_name][1:])
+    async_result = functio.delay(arguments, function_registry[func_name][1:])
 
     r = Redis(host='redis',
               port=6379,
