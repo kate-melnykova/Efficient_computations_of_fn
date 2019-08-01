@@ -65,14 +65,16 @@ def schedule_calculation():
 
     # get task identifier
     async_result = functio.delay(func_name, arguments, function_registry[func_name][1:])
-    print('Async_result', async_result)
-    print('Type of task_id', async_result.task_id, type(async_result.task_id))
+
     r = Redis(host='redis',
               port=6379,
               db=0)
-    message = json.dumps(arguments)
-    # r.set(b''.join(['celery-task-meta-',async_result.task_id]), json.dumps(''))
-    # TODO: check syntax -- serialize the line using json.dumps
+    message = json.dumps({"status": "PENDING",
+                          "result":  arguments,
+                          "task_id": async_result.task_id
+                          })
+    r.set(str.encode('celery-task-meta-' + async_result.task_id),
+          message)
     return redirect(url_for('view_results'))
 
 
@@ -83,20 +85,10 @@ def view_results():
               db=0)
     results_temp = {}
     for key in r.keys('*'):
-        print('Pickled', r.get(key))
-        try:
-            result = json.loads(r.get(key))
-            print('Unpickled', result)
-            # if 'result' in result:
-            # celery worker result
-            task_id = result['task_id']
-            result = result['result']
-            results_temp[task_id] = result
-        except:
-            # in progress
-            # results_temp[task_id] = {}
-            # TODO: status is Pending
-            pass
+        result = json.loads(r.get(key))
+        task_id = result['task_id']
+        result = result['result']
+        results_temp[task_id] = result
 
     return render_template('view_results.html',
                            results=results_temp)
