@@ -1,12 +1,14 @@
-from typing import Dict
 from time import time
+from typing import List, Dict
 
 
-def factorial(arguments: dict, parameter_names: list):
+def factorial(arguments: Dict[str, int or str], parameter_names: List[str]):
     """
-    :param uuid: unique identifier of the string
-    :param results: global variable that keeps track of the progress
-    :param parameter_names: verifies all args' names that are passed to function
+    :param arguments: contains all input data for the computation
+    :param parameter_names: name of parameters
+
+    Computes the value of factorial within given time_limit and keeps
+    accuracy-many of it. If there is not enough time, None will be returned
 
     The algorithm is given at
     https://pdfs.semanticscholar.org/7388/ef8a3fa31b2d01f2835b3beeccdb16c0616a.pdf

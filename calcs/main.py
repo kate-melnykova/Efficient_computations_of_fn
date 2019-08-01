@@ -10,11 +10,7 @@ from flask import render_template
 import json
 from redis import Redis
 
-# from factorial import factorial
-# from compute_pi import compute_pi
-# from compute_e import compute_e
-
-from sci_funcs.tasks import functio
+from sci_funcs.tasks import args_to_function
 from sci_funcs.function_registry import function_registry
 
 
@@ -48,7 +44,7 @@ def schedule_calculation():
         arguments[item] = request.form[item]
 
     # get task identifier
-    async_result = functio.delay(arguments, function_registry[func_name][1:])
+    async_result = args_to_function.delay(arguments, function_registry[func_name][1:])
 
     r = Redis(host='redis',
               port=6379,
@@ -91,17 +87,4 @@ def view_specific_results():
             result = result['result']
             return render_template(f'{ result["func_name"] }.html',
                                    result=result)
-    return "Task not found"
-
-
-    """
-    # create thread
-    thread = Thread(target=func, args=(uuid, results, function_registry[func_name][1:]))
-
-    # start thread execution
-    thread.start()
-    """
-
-    """
-    curl -X POST -d 'func_name=factorial' -d 'argument=3' -d 'time_limit=1' -d 'accuracy=10' http://0.0.0.0:5000/schedule_calculation --verbose
-    """
+    return 'Task not found'

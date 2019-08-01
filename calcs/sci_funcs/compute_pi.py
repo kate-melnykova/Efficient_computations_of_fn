@@ -1,19 +1,20 @@
-from collections import defaultdict
 from decimal import Decimal
 from decimal import getcontext
 from time import time
+from typing import List, Dict
 
 
-def compute_pi(arguments: dict, parameter_names: list):
+def compute_pi(arguments: Dict[str, int or str], parameter_names: List[str]):
     """
-    :param uuid: unique identifier of the string
-    :param results: global variable that keeps track of the progress
-    :param parameter_names: verifies all args' names that are passed to function
+    :param arguments: contains all input data for the computation
+    :param parameter_names: name of parameters
 
-    The implementation of the Chudnovsky algorithm
+    Computes pi within given time_limit and keeps
+    accuracy-many of it. If there is not enough time, only
+    accuracy_achieved-many digits are displayed
+
+    Computation uses the Chudnovsky algorithm
     https://en.wikipedia.org/wiki/Chudnovsky_algorithm
-    :param accuracy:
-    :return:
     """
     assert set(parameter_names) == set(['time_limit', 'accuracy'])
 

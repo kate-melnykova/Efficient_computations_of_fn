@@ -7,7 +7,7 @@ from sci_funcs.compute_e import compute_e
 
 
 @shared_task
-def functio(arguments, arg_names):
+def args_to_function(arguments, arg_names):
     func_name = arguments['func_name']
     func = function_registry[func_name][0]
     func(arguments, arg_names)
