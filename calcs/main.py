@@ -81,10 +81,12 @@ def view_specific_results():
     r = Redis(host='redis',
               port=6379,
               db=0)
-    for key in r.keys('*'):
+    key = str.encode('celery-task-meta-' + task_id)
+    try:
         result = json.loads(r.get(key))
-        if task_id == result['task_id']:
-            result = result['result']
-            return render_template(f'{ result["func_name"] }.html',
-                                   result=result)
-    return 'Task not found'
+    except:
+        return 'Task not found'
+
+    result = result['result']
+    return render_template(f'{ result["func_name"] }.html',
+                           result=result)
