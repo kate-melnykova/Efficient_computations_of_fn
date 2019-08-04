@@ -10,6 +10,7 @@ from flask import render_template
 import json
 from redis import Redis
 
+from login_form import RegistrationForm
 from sci_funcs.tasks import args_to_function
 from sci_funcs.function_registry import function_registry
 
@@ -90,3 +91,16 @@ def view_specific_results():
     result = result['result']
     return render_template(f'{ result["func_name"] }.html',
                            result=result)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm(request.form)
+    if request.method == 'POST' and form.validate():
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        password2 = request.form['confirm']
+        return 'Registration is successful'
+    else:
+        return render_template('register.html', form=form)
