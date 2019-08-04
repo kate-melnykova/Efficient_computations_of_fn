@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Online calculator</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
+{% extends 'base.html' %}
 
-<body style="background-color:#d1d1e0;">
+{% block title %}<h1>Scientific computations</h1>{% endblock %}
 
-<div class="topnav">
-    <a href="./">Enter input</a>
-    <a href="./view_results">View results</a>
-</div>
+{% block content %}
 
 <h1 id="home" align="center">Online calculator</h1>
 <div>
@@ -27,7 +18,4 @@
         <p> Digits of interest = {{ result['accuracy'] }}</p>
     </fieldset>
 </div>
-
-<div class="footer" id="end">Created in July 2019</div>
-</body>
-</html>
+{% endblock %}

@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Scheduled calculations</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body style="background-color:#d1d1e0;">
-<div class="topnav">
-    <a href="./">Enter input</a>
-    <a class="active" href="./view_results">View results</a>
-</div>
+{% extends 'base.html' %}
 
+{% block title %} <h1> Scientific computations </h1> {% endblock %}
+
+{% block content %}
 <div>
 <h1 id="history" align="center">Scheduled computations</h1>
 
@@ -46,10 +38,4 @@
         </table>
     </form>
 </div>
-
-<div>
-    TODO: Add button for refreshing page
-</div>
-</body>
-<div class="footer" id="end">Created in July 2019</div>
-</html>
+{% endblock %}

@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {% if title %}
-        <title>{{ title }}</title>
-        {% else %}
-        <title>Welcome to scientific calculator</title>
-        {% endif %}
+  <head>
+      <meta charset="UTF-8">
+      {% block title %}<h1>Scientific computations</h1>{% endblock %}
+      <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+  </head>
+  <body style="background-color:#d1d1e0;">
 
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <div class="topnav">
+        <a href="./">Enter input</a>
+        <a href="./view_results">View results</a>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+    <div class="footer" id="end">
+        Created in August 2019
+    </div>
+  </body>
+</html>
+
+
     </head>
     <body style="background-color:#d1d1e0;">
     </body>
