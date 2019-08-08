@@ -3,3 +3,4 @@ WTForms==2.2.1
 Celery==4.3.0
 redis==3.2.1
 rabbitmq==0.2.0
+Flask-Login==0.4.1

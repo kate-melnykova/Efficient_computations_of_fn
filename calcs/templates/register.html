@@ -3,26 +3,35 @@
 {% block title %}<h1>Scientific computations</h1>{% endblock %}
 
 {% block content %}
-<h1> Registration </h1>
-<form  action="" method="post" role="form">
-        {{ form.csrf }}
-        <div class="form-group">
-              <label for="username">Name:</label>
-              <input type="text" class="form-control" id="username" name="username" placeholder="Username?">
-            <br>
-              <label for="email">Email:</label>
-              <input type="text" class="form-control" id="email" name="email" placeholder="Your email address.">
-	        <br>
-                  <label for="password">Password:</label>
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password.">
-            <br>
-                <label for="confirm">Repeat password:</label>
-                <input type="password" class="form-control" id="confirm" name="confirm" placeholder="Re-enter a password.">
-	</div>
-        <br>
-        <center>
-          <button type="submit">Submit</button>
-        </center>
-      </form>
+<h1> Registration/login </h1>
+<fieldset>
+    <table style="text-align:left">
+        <tr>
+            <td style="width:40%">
+                <h1> Please register</h1>
+                    <p style="color:red"> {{message_register }} </p>
+                <form action="" method="post" role="form">
+                    {{ regform.csrf }}
+                    <p> {{ regform.username.label }}: {{ regform.username() }}</p>
+                    <p> {{ regform.email.label }}: {{ regform.email() }}</p>
+                    <p> {{ regform.password.label }}: {{ regform.password() }}</p>
+                    <p> {{ regform.confirm.label }}: {{regform.confirm() }}</p>
+                    <p> <center> <input type="submit" name="submit" value="Register"></center></p>
+                </form>
+            </td>
+            <td style="width:40%">
+                    <p style="color:red"> {{message_login }} </p>
+                <h1> Already have an account?</h1>
+                <h1> Please log in.</h1>
+                <form  action="" method="post" role="form">
+                    {{ loginform.csrf }}
+                    <p> {{ loginform.username.label }}: {{ loginform.username() }}</p>
+                    <p> {{ loginform.password.label }}: {{ loginform.password() }}</p>
+                    <p> <center> <input type="submit" name="submit" value="Login"></center></p>
+                </form>
+            </td>
+        </tr>
+    </table>
+</fieldset>
 
 {% endblock %}
