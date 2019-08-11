@@ -1,19 +1,21 @@
 import flask_login
 
+from views.auth.database import users as db
+
 """
 def create_login_manager(app):
     login_manager = flask_login.LoginManager()
     login_manager.init_app(app)
     return login_manager
 """
-db = {'user1': {'password': 'pass1'}}
 
 
 class User(flask_login.UserMixin):
-    def __init__(self, username, password, email=None):
+    def __init__(self, username, password=None, email=None):
         self.username = username
         self.password = password
         self.email = email
+        self.id = username
 
     def verify_user(self, db):
         return self.username in db

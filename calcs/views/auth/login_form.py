@@ -1,11 +1,13 @@
 from flask import Flask
 from flask import Blueprint
+from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
 import flask_login
-from flask_login import login_manager
+from flask_login import login_user, login_required, logout_user
+from flask_login import LoginManager
 from wtforms import Form
 from wtforms import BooleanField
 from wtforms import StringField
@@ -14,6 +16,7 @@ from wtforms import validators
 
 from views.auth import User
 from views.auth.database import users
+from views.auth.db_methods import create_new_user
 
 
 class RegistrationForm(Form):
@@ -66,7 +69,9 @@ def register():
                                            message_register='Username already exists',
                                            login_register='')
                 else:
-                    return redirect(url_for('registration_process'))
+                    create_new_user(user)
+                    login_user(user)
+                    return redirect(url_for('index'))
             else:
                 return render_template('register.html',
                                        regform=regform,
@@ -74,7 +79,22 @@ def register():
                                        message_register='Too short password',
                                        login_register='')
         elif request.form['submit'] == 'Login':
-            return 'Logging in'
+            if loginform.validate():
+                username = request.form['username']
+                password = request.form['password']
+                user = User(username=username, password=password, email='')
+                if username in users:
+                    # login user
+                    login_user(user)
+                    flash('Login is successful')
+                    return redirect(url_for('index'))
+                else:
+                    return render_template('register.html',
+                                           regform=regform,
+                                           loginform=loginform,
+                                           message_register='',
+                                           login_register='Username already exists')
+
     else:
         return render_template('register.html',
                                regform=regform,
@@ -86,6 +106,18 @@ def register():
 @auth.route('/registration_process', methods=['POST'])
 def registration_process():
     return 'Registration is successful'
+
+
+@auth.route("/logout", methods=['GET', 'POST'])
+@login_required
+def logout():
+    if request.method == 'GET':
+        return render_template('logout.html')
+    else:
+        if request.form['response'] == 'yes':
+            logout_user()
+            flash('You have successfully logged out')
+        return redirect(url_for('index'))
 
 
 
