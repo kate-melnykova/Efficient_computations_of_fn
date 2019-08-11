@@ -1,14 +1,14 @@
 from flask import Blueprint
 import flask_login
 
-from views.authentification import User
+from views.auth import User
+
 
 login = Blueprint('login', __name__)
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(login)
 
-# Our mock database.
 users = {'user1': {'password': 'pass1'}}
 
 

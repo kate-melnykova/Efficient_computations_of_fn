@@ -1,33 +1,28 @@
 from time import time
-from uuid import uuid4
 
-from celery import Celery
-from flask import Flask
+from flask import Blueprint
 from flask import url_for
 from flask import redirect
 from flask import request
 from flask import render_template
-import flask_login
 import json
 from redis import Redis
 
-# from views.auth import create_login_manager, User
+from factory_app import factory_app
 # from views.auth.login_form import RegistrationForm, LoginForm
+from views.auth.login_form import auth
 from sci_funcs.tasks import args_to_function
 from sci_funcs.function_registry import function_registry
-from factory_app import factory_app
 
 app, celery, redis_connection = factory_app()
+app.register_blueprint(auth)
 
 """
-# login_manager = create_login_manager(app)
-
-# Our mock database.
-users = {'user1': {'password': 'pass1'}}
+login_manager = create_login_manager(app)
 
 
 @login_manager.user_loader
-def user_loader(email):
+def user_loader():
     if email not in users:
         return
 
@@ -51,7 +46,6 @@ def request_loader(request):
 
     return user
 """
-
 
 @app.route('/', methods=['GET'])
 def index():

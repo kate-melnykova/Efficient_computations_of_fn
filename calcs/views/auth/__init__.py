@@ -1,10 +1,12 @@
 import flask_login
 
-
+"""
 def create_login_manager(app):
     login_manager = flask_login.LoginManager()
     login_manager.init_app(app)
     return login_manager
+"""
+db = {'user1': {'password': 'pass1'}}
 
 
 class User(flask_login.UserMixin):

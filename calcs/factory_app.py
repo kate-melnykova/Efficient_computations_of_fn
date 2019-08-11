@@ -17,8 +17,8 @@ def factory_app():
     app.secret_key = 'super secret string'  # Change this!
 
     celery = Celery(app.name, broker=app.config['broker_url'])
-    celery.conf.update(app.config)
     celery.set_default()
+    celery.conf.update(app.config)
 
     redis_connection = Redis(host='redis',
                              port=6379,
