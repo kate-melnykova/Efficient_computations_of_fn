@@ -11,19 +11,16 @@ import flask_login
 import json
 from redis import Redis
 
-from authentification import create_login_manager, User
-from authentification.login_form import RegistrationForm, LoginForm
+# from views.auth import create_login_manager, User
+# from views.auth.login_form import RegistrationForm, LoginForm
 from sci_funcs.tasks import args_to_function
 from sci_funcs.function_registry import function_registry
+from factory_app import factory_app
 
+app, celery, redis_connection = factory_app()
 
-app = Flask(__name__)
-app.config['broker_url'] = 'amqp://rabbitmq:5672//'
-app.config['result_backend'] = 'redis://redis:6379'
-app.config['imports'] = ['sci_funcs.tasks']
-app.secret_key = 'super secret string'  # Change this!
-
-login_manager = create_login_manager(app)
+"""
+# login_manager = create_login_manager(app)
 
 # Our mock database.
 users = {'user1': {'password': 'pass1'}}
@@ -53,15 +50,7 @@ def request_loader(request):
     user.is_authenticated = request.form['password'] == users[email]['password']
 
     return user
-
-
-celery = Celery(app.name, broker=app.config['broker_url'])
-celery.conf.update(app.config)
-celery.set_default()
-
-redis_connection = Redis(host='redis',
-                         port=6379,
-                         db=0)
+"""
 
 
 @app.route('/', methods=['GET'])
@@ -109,7 +98,7 @@ def view_results():
 
 # @app.route('/view_result<uuid>', methods=['GET'])
 @app.route('/result', methods=['GET'])
-@flask_login.login_required
+# @flask_login.login_required
 def view_specific_results():
     task_id = str(request.args.get('task_id', ''))
     key = str.encode('celery-task-meta-' + task_id)
@@ -122,7 +111,7 @@ def view_specific_results():
     return render_template(f'{ result["func_name"] }.html',
                            result=result)
 
-
+"""
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     regform = RegistrationForm(request.form)
@@ -191,6 +180,7 @@ def login():
 def protected():
     return 'Logged in as: ' + flask_login.current_user.id
 
+"""
 """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
