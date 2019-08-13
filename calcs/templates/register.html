@@ -10,7 +10,7 @@
             <td style="width:40%">
                 <h1> Please register</h1>
                     <p style="color:red"> {{message_register }} </p>
-                <form action="" method="post" role="form">
+                <form action="{{ url_for('auth.registration_process') }}" method="post" role="form">
                     {{ regform.csrf }}
                     <p> {{ regform.username.label }}: {{ regform.username() }}</p>
                     <p> {{ regform.email.label }}: {{ regform.email() }}</p>
@@ -23,7 +23,7 @@
                     <p style="color:red"> {{message_login }} </p>
                 <h1> Already have an account?</h1>
                 <h1> Please log in.</h1>
-                <form  action="" method="post" role="form">
+                <form  action="{{ url_for('auth.login_process') }}" method="post" role="form">
                     {{ loginform.csrf }}
                     <p> {{ loginform.username.label }}: {{ loginform.username() }}</p>
                     <p> {{ loginform.password.label }}: {{ loginform.password() }}</p>

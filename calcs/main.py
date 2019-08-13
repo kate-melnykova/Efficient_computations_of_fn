@@ -32,7 +32,8 @@ def user_loader(username):
     if username not in users:
         return
 
-    user = User(username=username)
+    db_entry = users[username]
+    user = User(username=username, password=db_entry['password'], email=db_entry['email'])
     return user
 
 
@@ -114,48 +115,7 @@ def view_specific_results():
     result = result['result']
     return render_template(f'{ result["func_name"] }.html',
                            result=result)
-"""
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    regform = RegistrationForm(request.form)
-    loginform = LoginForm(request.form)
-    message_register = ""
-    message_login = ""
-    if request.method == 'POST':
-        if request.form['submit'] == 'Register':
-            if regform.validate():
-                username = request.form['username']
-                password = request.form['password']
-                email = request.form['email']
-                user = User(username=username, password=password, email=email)
-                if username in users:
-                    return render_template('register.html',
-                                           regform=regform,
-                                           loginform=loginform,
-                                           message_register='Username already exists',
-                                           login_register='')
-                else:
-                    return redirect(url_for('registration_process'))
-            else:
-                return render_template('register.html',
-                                       regform=regform,
-                                       loginform=loginform,
-                                       message_register='Too short password',
-                                       login_register='')
-        elif request.form['submit'] == 'Login':
-            return 'Logging in'
-    else:
-        return render_template('register.html',
-                               regform=regform,
-                               loginform=loginform,
-                               message_register='',
-                               login_register='')
 
-
-@app.route('/registration_process', methods=['POST'])
-def registration_process():
-    return 'Registration is successful'
-"""
 
 """
 @app.route('/login', methods=['GET', 'POST'])
