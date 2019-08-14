@@ -5,8 +5,6 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from flask_login import login_user, login_required, logout_user
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
 from wtforms import Form
 # from wtforms import BooleanField
 from wtforms import StringField
@@ -14,7 +12,7 @@ from wtforms import PasswordField
 from wtforms import validators
 
 from views.auth import User
-from views.auth.database import users
+# from views.auth.database import users
 from views.auth.db_methods import create_new_user
 
 
@@ -31,7 +29,7 @@ class RegistrationForm(Form):
 
 class LoginForm(Form):
     username = StringField('Username', [validators.Length(min=4, max=25)])
-    password = PasswordField('New Password', [validators.DataRequired()])
+    password = PasswordField('Password', [validators.DataRequired()])
 
 
 auth = Blueprint('auth', __name__)
