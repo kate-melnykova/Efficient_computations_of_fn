@@ -35,38 +35,16 @@ class LoginForm(Form):
 auth = Blueprint('auth', __name__)
 
 
-@auth.route('/login', methods=['GET', 'POST'])
-@auth.route('/register', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET'])
+@auth.route('/register', methods=['GET'])
 def register():
     regform = RegistrationForm(request.form)
     loginform = LoginForm(request.form)
-    if request.method == 'GET':
-        return render_template('register.html',
-                               regform=regform,
-                               loginform=loginform,
-                               message_register='',
-                               login_register='')
-    else:
-        if request.form['submit'] == 'Register':
-            if regform.validate():
-                return redirect(url_for('registration_process'))
-            else:
-                flash("Passwords don't match")
-                return render_template('register.html',
-                                       regform=regform,
-                                       loginform=loginform,
-                                       message_register="Passwords don't match",
-                                       login_register='')
-        else:
-            if loginform.validate():
-                return redirect(url_for('login_process'))
-            else:
-                flash("Incorrect username/password")
-                return render_template('register.html',
-                                       regform=regform,
-                                       loginform=loginform,
-                                       message_register='',
-                                       login_register="Incorrect username/password")
+    return render_template('register.html',
+                           regform=regform,
+                           loginform=loginform,
+                           message_register='',
+                           login_register='')
 
 
 @auth.route('/registration/process', methods=['POST'])
@@ -85,6 +63,28 @@ def registration_process():
         return redirect(url_for('index'))
 
 
+    # if request.form['submit'] == 'Register':
+    #     if regform.validate():
+    #         return redirect(url_for('registration_process'))
+    #     else:
+    #         flash("Passwords don't match")
+    #         return render_template('register.html',
+    #                                regform=regform,
+    #                                loginform=loginform,
+    #                                message_register="Passwords don't match",
+    #                                login_register='')
+    # else:
+    #     if loginform.validate():
+    #         return redirect(url_for('login_process'))
+    #     else:
+    #         flash("Incorrect username/password")
+    #         return render_template('register.html',
+    #                                regform=regform,
+    #                                loginform=loginform,
+    #                                message_register='',
+    #                                login_register="Incorrect username/password")
+    #
+
 @auth.route('/login/process', methods=['POST'])
 def login_process():
     assert request.method == 'POST'
@@ -102,6 +102,7 @@ def login_process():
     else:
         flash('Username already exists')
         return redirect(url_for('auth.register'))
+
 
 
 @auth.route("/logout", methods=['GET', 'POST'])
