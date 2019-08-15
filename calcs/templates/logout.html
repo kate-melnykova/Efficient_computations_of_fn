@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}<h1>Scientific computations</h1>{% endblock %}
+{% block title %}Scientific computations{% endblock %}
 
 {% block content %}
 
-<form action="{{url_for('auth.logout_process')}}">
+<form action="{{url_for('auth.logout_process')}}" method="POST">
     <p> Do you really want to log out?</p>
     <p>
-        <input type="button" name="response" value="yes">
-        <input type="button" name="response" value="no">
+        <input type="submit" name="response" value="yes">
+        <input type="submit" name="response" value="no">
     </p>
 </form>
 

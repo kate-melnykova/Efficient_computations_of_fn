@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
       <meta charset="UTF-8">
-      {% block title %}<h1>Scientific computations</h1>{% endblock %}
+      <title>{% block title %}Scientific computations{% endblock %}</title>
       <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   </head>
   <body style="background-color:#d1d1e0;">
@@ -12,8 +12,11 @@
         <a href="./view_results">View results</a>
     </div>
 
-    {% block content %}
-    {% endblock %}
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
     <div class="footer" id="end">
         Created in August 2019
     </div>

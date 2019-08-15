@@ -118,7 +118,7 @@ def logout_process():
     if request.form['response'] == 'yes':
         logout_user()
         print('Logged out')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth.register'))
     else:
         return redirect(url_for('index'))
 
