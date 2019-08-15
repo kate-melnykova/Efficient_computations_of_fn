@@ -8,8 +8,16 @@
   <body style="background-color:#d1d1e0;">
 
     <div class="topnav">
+        {% if current_user.is_authenticated %}
+        <a href="#"> Hi {{ current_user.username }}! </a>
+        {% else %}
+            <a href="{{ url_for('auth.register') }}"> Please login/register </a>
+        {% endif %}
         <a href="./">Enter input</a>
         <a href="./view_results">View results</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('auth.logout') }}"> Logout </a>
+        {% endif %}
     </div>
 
     <div class="content">

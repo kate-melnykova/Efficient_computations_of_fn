@@ -110,7 +110,7 @@ def logout():
     if request.method == 'GET':
         return render_template('logout.html')
     else:
-        return redirect(url_for('logout_process'))
+        return redirect(url_for('auth.logout_process'))
 
 
 @auth.route('/logout/process', methods=['POST'])
