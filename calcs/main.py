@@ -36,7 +36,6 @@ def user_loader(username):
     user = User(username=username, password=db_entry['password'], email=db_entry['email'])
     return user
 
-
 app.register_blueprint(auth)
 
 """

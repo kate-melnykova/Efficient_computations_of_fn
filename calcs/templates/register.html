@@ -9,23 +9,27 @@
         <tr>
             <td style="width:40%">
                 <h1> Please register</h1>
-                    <p style="color:red"> {{message_register }} </p>
                 <form action="{{ url_for('auth.registration_process') }}" method="post" role="form">
                     {{ regform.csrf }}
-                    <p> {{ regform.username.label }}: {{ regform.username() }}</p>
+                    <p> {{ regform.username.label }}: {{ regform.username(class="css_class") }}
+                        <br>
+                        <small> * between 4 and 25 characters.</small>
+                    </p>
                     <p> {{ regform.email.label }}: {{ regform.email() }}</p>
-                    <p> {{ regform.password.label }}: {{ regform.password() }}</p>
+                    <p> {{ regform.password.label }}: {{ regform.password() }}
+                    <br>
+                        <small> * between 6 and 35 characters.</small>
+                    </p>
                     <p> {{ regform.confirm.label }}: {{regform.confirm() }}</p>
                     <p> <center> <input type="submit" name="submit" value="Register"></center></p>
                 </form>
             </td>
             <td style="width:40%">
-                    <p style="color:red"> {{message_login }} </p>
                 <h1> Already have an account?</h1>
                 <h1> Please log in.</h1>
                 <form  action="{{ url_for('auth.login_process') }}" method="post" role="form">
                     {{ loginform.csrf }}
-                    <p> {{ loginform.username.label }}: {{ loginform.username() }}</p>
+                    <p> {{ loginform.username.label }}: {{ loginform.username(class="css_class") }}</p>
                     <p> {{ loginform.password.label }}: {{ loginform.password() }}</p>
                     <p> <center> <input type="submit" name="submit" value="Login"></center></p>
                 </form>

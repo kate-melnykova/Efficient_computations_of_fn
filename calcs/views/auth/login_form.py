@@ -1,26 +1,31 @@
+import json
+from time import time
+
 from flask import Blueprint
 from flask import flash
 from flask import redirect
 from flask import render_template
 from flask import request
 from flask import url_for
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
+from redis import Redis
 from wtforms import Form
 # from wtforms import BooleanField
 from wtforms import StringField
 from wtforms import PasswordField
 from wtforms import validators
+# from werkzeug.security import check_password_hash
 
 from views.auth import User
 # from views.auth.database import users
-from views.auth.db_methods import create_new_user
+from views.auth import add_new_user
 
 
 class RegistrationForm(Form):
     username = StringField('Username', [validators.Length(min=4, max=25)])
     email = StringField('Email Address', [validators.Length(min=6, max=35)])
     password = PasswordField('New Password', [
-        validators.DataRequired(),
+        validators.Length(min=6, max=35),
         validators.EqualTo('confirm', message='Passwords must match')
     ])
     confirm = PasswordField('Repeat Password')
@@ -29,14 +34,16 @@ class RegistrationForm(Form):
 
 class LoginForm(Form):
     username = StringField('Username', [validators.Length(min=4, max=25)])
-    password = PasswordField('Password', [validators.DataRequired()])
+    password = PasswordField('Password', [validators.Length(min=6, max=35)])
 
 
 auth = Blueprint('auth', __name__)
 
+redis_connection_user = Redis(host='redis', port=6379, db=1)
 
-@auth.route('/login', methods=['GET'])
-@auth.route('/register', methods=['GET'])
+
+@auth.route('/login')
+@auth.route('/register')
 def register():
     regform = RegistrationForm(request.form)
     loginform = LoginForm(request.form)
@@ -50,59 +57,58 @@ def register():
 @auth.route('/registration/process', methods=['POST'])
 def registration_process():
     assert request.method == 'POST'
-    username = request.form['username']
-    password = request.form['password']
-    email = request.form['email']
-    user = User(username=username, password=password, email=email)
-    if user.verify_user_exists():
-        flash('Username already exists')
-        return redirect(url_for('auth.register'))
+    regform = RegistrationForm(request.form)
+    if regform.validate():
+        username = regform.username.data
+        user = User(username=username, password=regform.password.data, email=regform.email.data)
+        if redis_connection_user.get(username) is None:
+            user_db = user.convert_user_to_user_db()
+            redis_connection_user.set(username, json.dumps(user_db))
+            login_user(user)
+            print(current_user)
+            return redirect(url_for('index'))
+        else:
+            flash('Username already exists')
+            return redirect(url_for('auth.register'))
     else:
-        create_new_user(user)
-        login_user(user)
-        return redirect(url_for('index'))
+        error_message = f"""Incorrect credentials: \n"""
+        for k, v in regform.errors.items():
+            error_message += f""" -- {k}: {v[0]} \n"""
+            print(error_message)
+        flash(error_message)
+        return redirect(url_for('auth.register'))
 
-
-    # if request.form['submit'] == 'Register':
-    #     if regform.validate():
-    #         return redirect(url_for('registration_process'))
-    #     else:
-    #         flash("Passwords don't match")
-    #         return render_template('register.html',
-    #                                regform=regform,
-    #                                loginform=loginform,
-    #                                message_register="Passwords don't match",
-    #                                login_register='')
-    # else:
-    #     if loginform.validate():
-    #         return redirect(url_for('login_process'))
-    #     else:
-    #         flash("Incorrect username/password")
-    #         return render_template('register.html',
-    #                                regform=regform,
-    #                                loginform=loginform,
-    #                                message_register='',
-    #                                login_register="Incorrect username/password")
-    #
 
 @auth.route('/login/process', methods=['POST'])
 def login_process():
     assert request.method == 'POST'
-    username = request.form['username']
-    password = request.form['password']
-    user = User(username=username, password=password, email='')
-    if user.verify_user_exists():
-        if user.verify_password_db():
-            login_user(user)
-            return redirect(url_for('index'))
+    loginform = LoginForm(request.form)
+    if loginform.validate():
+        username = loginform.username.data
+        user_db = json.loads(redis_connection_user.get(username))
+        if user_db is not None:
+            print(f'User found: {user_db}')
+            user = User.convert_user_db_to_user(user_db)
+            # if check_password_hash(user.password, loginform.password.data):
+            if user.password == loginform.password.data:
+                # login successful
+                user.last_login = time()
+                login_user(user)
+                user_db = user.convert_user_to_user_db()
+                redis_connection_user.set(username, json.dumps(user_db))
+                login_user(user, remember=True)
+                print(current_user)
+                return redirect(url_for('index'))
+            else:
+                flash('Incorrect password')
+                return redirect(url_for('auth.register'))
         else:
-            flash('Incorrect password')
+            flash('The username does not exist')
             return redirect(url_for('auth.register'))
 
     else:
-        flash('Username already exists')
+        flash(f'Incorrect credentials: {loginform.errors}')
         return redirect(url_for('auth.register'))
-
 
 
 @auth.route("/logout", methods=['GET', 'POST'])
