@@ -12,8 +12,6 @@ from redis import Redis
 
 from factory_app import factory_app
 from views.auth import User
-from views.auth.database import users
-from views.auth.login_form import RegistrationForm, LoginForm
 from views.auth.login_form import auth
 from sci_funcs.tasks import args_to_function
 from sci_funcs.function_registry import function_registry
@@ -32,31 +30,12 @@ redis_connection_user = Redis(host='redis', port=6379, db=1)
 def user_loader(username):
     user_db = redis_connection_user.get(username)
     if user_db is not None:
-        user_db = json.loads(user_db)
-        user = User.convert_user_db_to_user(user_db)
-        return user
+        return User.deserialize(user_db)
     else:
         return None
 
 
 app.register_blueprint(auth)
-
-"""
-@login_manager.request_loader
-def request_loader(request):
-    email = request.form.get('email')
-    if email not in users:
-        return
-
-    user = User()
-    user.id = email
-
-    # DO NOT ever store passwords in plaintext and always compare password
-    # hashes using constant-time comparison!
-    user.is_authenticated = request.form['password'] == users[email]['password']
-
-    return user
-"""
 
 
 @app.route('/', methods=['GET'])

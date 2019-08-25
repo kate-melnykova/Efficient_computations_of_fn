@@ -21,7 +21,7 @@
                         <small> * between 6 and 35 characters.</small>
                     </p>
                     <p> {{ regform.confirm.label }}: {{regform.confirm() }}</p>
-                    <p> <center> <input type="submit" name="submit" value="Register"></center></p>
+                    <p style="text-align: center;"> <input type="submit" name="submit" value="Register"></p>
                 </form>
             </td>
             <td style="width:40%">
@@ -31,7 +31,7 @@
                     {{ loginform.csrf }}
                     <p> {{ loginform.username.label }}: {{ loginform.username(class="css_class") }}</p>
                     <p> {{ loginform.password.label }}: {{ loginform.password() }}</p>
-                    <p> <center> <input type="submit" name="submit" value="Login"></center></p>
+                    <p style="text-align: center;"> <input type="submit" name="submit" value="Login"></p>
                 </form>
             </td>
         </tr>

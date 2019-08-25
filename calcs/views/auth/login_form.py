@@ -10,15 +10,11 @@ from flask import url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from redis import Redis
 from wtforms import Form
-# from wtforms import BooleanField
 from wtforms import StringField
 from wtforms import PasswordField
 from wtforms import validators
-# from werkzeug.security import check_password_hash
 
 from views.auth import User
-# from views.auth.database import users
-from views.auth import add_new_user
 
 
 class RegistrationForm(Form):
@@ -37,6 +33,13 @@ class LoginForm(Form):
     password = PasswordField('Password', [validators.Length(min=6, max=35)])
 
 
+def generate_error_message(form_errors):
+    error_message = f''
+    for k, v in form_errors.items():
+        error_message += f""" -- {k}: {v[0]} \n"""
+    return error_message
+
+
 auth = Blueprint('auth', __name__)
 
 redis_connection_user = Redis(host='redis', port=6379, db=1)
@@ -47,11 +50,7 @@ redis_connection_user = Redis(host='redis', port=6379, db=1)
 def register():
     regform = RegistrationForm(request.form)
     loginform = LoginForm(request.form)
-    return render_template('register.html',
-                           regform=regform,
-                           loginform=loginform,
-                           message_register='',
-                           login_register='')
+    return render_template('register.html', regform=regform, loginform=loginform)
 
 
 @auth.route('/registration/process', methods=['POST'])
@@ -62,19 +61,15 @@ def registration_process():
         username = regform.username.data
         user = User(username=username, password=regform.password.data, email=regform.email.data)
         if redis_connection_user.get(username) is None:
-            user_db = user.convert_user_to_user_db()
+            user_db = user.serialize()
             redis_connection_user.set(username, json.dumps(user_db))
             login_user(user)
-            print(current_user)
             return redirect(url_for('index'))
         else:
             flash('Username already exists')
             return redirect(url_for('auth.register'))
     else:
-        error_message = f"""Incorrect credentials: \n"""
-        for k, v in regform.errors.items():
-            error_message += f""" -- {k}: {v[0]} \n"""
-            # print(error_message)
+        error_message = f"""Incorrect credentials: \n""" + generate_error_message(regform.errors)
         flash(error_message)
         return redirect(url_for('auth.register'))
 
@@ -87,41 +82,22 @@ def login_process():
         username = loginform.username.data
         user_db = redis_connection_user.get(username)
         if user_db is not None:
-            print(f'User found: {user_db}')
-            user_db = json.loads(user_db)
-            user = User.convert_user_db_to_user(user_db)
-            # if check_password_hash(user.password, loginform.password.data):
-            if user.password == loginform.password.data:
-                # login successful
+            user = User.deserialize(user_db)
+            if user.verify_password(loginform.password.data):
                 user.last_login = time()
-                # login_user(user)
-                user_db = user.convert_user_to_user_db()
+                user_db = user.serialize()
                 redis_connection_user.set(username, json.dumps(user_db))
-                val = login_user(user, remember=True)
-                print(current_user)
+                login_user(user, remember=True)
                 return redirect(url_for('index'))
-                # return render_template('index.html')
             else:
-                error_message = f"""Incorrect password: \n"""
-                for k, v in loginform.errors.items():
-                    error_message += f""" -- {k}: {v[0]} \n"""
-                    # print(error_message)
-                flash(error_message)
+                flash(f"""Incorrect password \n""" + generate_error_message(loginform.errors))
                 return redirect(url_for('auth.register'))
         else:
-            error_message = f"""The username does not exist: \n"""
-            for k, v in loginform.errors.items():
-                error_message += f""" -- {k}: {v[0]} \n"""
-                # print(error_message)
-            flash(error_message)
+            flash(f"""The username does not exist: \n""" + generate_error_message(loginform.errors))
             return redirect(url_for('auth.register'))
 
     else:
-        error_message = f"""Incorrect credentials: \n"""
-        for k, v in loginform.errors.items():
-            error_message += f""" -- {k}: {v[0]} \n"""
-            # print(error_message)
-        flash(error_message)
+        flash(f"""Incorrect credentials: \n""" + generate_error_message(loginform.errors))
         return redirect(url_for('auth.register'))
 
 
