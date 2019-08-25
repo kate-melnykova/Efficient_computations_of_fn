@@ -6,7 +6,7 @@ from flask import url_for
 from flask import redirect
 from flask import request
 from flask import render_template
-from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 import json
 from redis import Redis
 
@@ -25,16 +25,19 @@ app, celery, redis_connection = factory_app()
 ######
 login_manager = LoginManager()
 login_manager.init_app(app)
+redis_connection_user = Redis(host='redis', port=6379, db=1)
 
 
 @login_manager.user_loader
 def user_loader(username):
-    if username not in users:
-        return
+    user_db = redis_connection_user.get(username)
+    if user_db is not None:
+        user_db = json.loads(user_db)
+        user = User.convert_user_db_to_user(user_db)
+        return user
+    else:
+        return None
 
-    db_entry = users[username]
-    user = User(username=username, password=db_entry['password'], email=db_entry['email'])
-    return user
 
 app.register_blueprint(auth)
 
@@ -59,6 +62,7 @@ def request_loader(request):
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    print(f'Current user on index page {current_user}')
     return render_template('index.html')
 
 

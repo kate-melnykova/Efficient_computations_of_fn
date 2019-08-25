@@ -11,6 +11,15 @@ getcontext().prec = precision
 constants = {'pi': str(Decimal(np.pi)),
              'e': str(Decimal(np.e))
              }
+trigonometry = {
+    'cos': np.cos,
+    'sin': np.sin,
+    'tan': np.tan,
+    'cot': lambda x: 1/np.tan(x),
+    'tg': np.tan,
+    'sec': lambda x: 1/np.sin(x),
+    'csc': lambda x: 1/np.cos(x),
+}
 
 
 def compute_algebraic(s: str):
@@ -62,6 +71,22 @@ def compute(s):
     s = str(s)
     s = s.replace(' ', '')
 
+    for func_name, func in trigonometry.items():
+        if func_name + '(' in s:
+            start_idx = s.index(func_name + '(')
+            balance = 1
+            for end_idx in range(start_idx + len(func_name) + 1, len(s)):
+                if s[end_idx] == '(':
+                    balance += 1
+                elif s[end_idx] == ')':
+                    balance -= 1
+
+                if not balance:
+                    break
+
+            value = float(compute(s[start_idx+len(func_name) + 1:end_idx]))
+            s = s[:start_idx] + str(func(value)) + s[end_idx+1:]
+
     # exclude brackets
     while '(' in str(s):
         s = exclude_brackets(s)
@@ -109,7 +134,17 @@ class TestCalc(TestCase):
         self.assertAlmostEqual(compute('pi'), Decimal(str(np.pi)), places=precision-1)
         self.assertAlmostEqual(compute('pi+1'), Decimal(str(np.pi + 1)), places=precision-1)
         self.assertAlmostEqual(compute('pi+e'), Decimal(str(np.pi + np.e)), places=precision-1)
-        self.assertAlmostEqual(compute('(pi + 3)/(e-1)'), Decimal(str((np.pi+3) / (np.e-1))), places=precision-2)
+        self.assertAlmostEqual(compute('(pi + 3)/(e-1)'),
+                               Decimal(str((np.pi+3) / (np.e-1))), places=precision-2)
+
+    def test_with_trigonometry(self):
+        self.assertAlmostEqual(compute('sin(1)'), Decimal(str(np.sin(1))), places=precision-1)
+        self.assertAlmostEqual(compute('cos(0.7) + tan(2.8)'), Decimal(str(np.cos(0.7)+np.tan(2.8))),
+                               places=precision-1)
+        self.assertAlmostEqual(compute('sin(cos(1000))'),
+                               Decimal(str(np.sin(np.cos(1000)))),
+                               places=precision-1)
+
 
 
 if __name__ == '__main__':
