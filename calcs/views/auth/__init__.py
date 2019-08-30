@@ -4,8 +4,6 @@ from time import time
 import flask_login
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# from views.auth.database import users as db
-
 
 class User(flask_login.UserMixin):
     def __str__(self):
@@ -45,11 +43,6 @@ class User(flask_login.UserMixin):
     def deserialize(user_data):
         user_data = json.loads(user_data)
         return User(**user_data)
-
-
-def add_new_user(user, db):
-    assert db.get(user.username) is None
-    db.set(user.username, json.dumps(user.serialize()))
 
 
 
