@@ -16,11 +16,10 @@ def factory_app():
     app.config['imports'] = ['sci_funcs.tasks']
     app.secret_key = 'super secret string'  # Change this!
 
+    app.config['USER_DB'] = 1
+    app.config['CALCS_DB'] = 0
+
     celery = Celery(app.name, broker=app.config['broker_url'])
     celery.set_default()
     celery.conf.update(app.config)
-
-    redis_connection = Redis(host='redis',
-                             port=6379,
-                             db=0)
-    return app, celery, redis_connection
+    return app, celery
