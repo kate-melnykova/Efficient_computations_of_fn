@@ -71,6 +71,18 @@ def rpn(string):
             elif token in functions.keys():
                 op_queue = [token] + op_queue # TODO: modify for priorities
             elif token in ['+', '-', '*', '/', '^']:
+                # consider precedence
+                token_prec = precedence[token]
+                while op_queue:
+                    if op_queue[0] in ['+', '-', '*', '/', '^']:
+                        if precedence[op_queue[0]] > token_prec:
+                            token_temp = op_queue.pop(0)
+                            output.append(token_temp)
+                        else:
+                            break
+                    else:
+                        break
+
                 op_queue = [token] + op_queue
 
             # if the token is a left paren (i.e."("), then:

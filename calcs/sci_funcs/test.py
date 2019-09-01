@@ -22,6 +22,10 @@ class Test_convertion_to_rpn(TestCase):
         self.assertListEqual(rpn('6/4'), [Decimal('6'), Decimal('4'), '/'])
         self.assertListEqual(rpn('2^3'), [Decimal('2'), Decimal('3'), '^'])
 
+    def test_precedence(self):
+        self.assertListEqual(rpn('2+3*4'), [Decimal('2'), Decimal('3'), Decimal('4'), '*', '+'])
+        self.assertListEqual(rpn('5*6+7'), [Decimal('5'), Decimal('6'), '*', Decimal('7'), '+'])
+
     def test_brackets(self):
         self.assertListEqual(rpn('(2+3)-5'),[Decimal('2'), Decimal('3'), '+', Decimal('5'), '-'])
         self.assertListEqual(rpn('4*(6-7)'), [Decimal('4'), Decimal('6'), Decimal('7'), '-', '*'])
