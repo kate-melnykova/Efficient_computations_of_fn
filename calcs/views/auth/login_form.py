@@ -2,6 +2,7 @@ import json
 from time import time
 
 from flask import Blueprint
+from flask import current_app
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -15,6 +16,7 @@ from wtforms import PasswordField
 from wtforms import validators
 
 from views.auth import User
+from redispy import get_connection
 
 
 class RegistrationForm(Form):
@@ -42,7 +44,7 @@ def generate_error_message(form_errors):
 
 auth = Blueprint('auth', __name__)
 
-redis_connection_user = Redis(host='redis', port=6379, db=1)
+# redis_connection_user = Redis(host='redis', port=6379, db=1)
 
 
 @auth.route('/login')
@@ -60,9 +62,10 @@ def registration_process():
     if regform.validate():
         username = regform.username.data
         user = User(username=username, password=regform.password.data, email=regform.email.data)
-        if redis_connection_user.get(username) is None:
+        connection = get_connection(db=current_app.config['USER_DB'])
+        if connection.get(username) is None:
             user_db = user.serialize()
-            redis_connection_user.set(username, json.dumps(user_db))
+            connection.set(username, json.dumps(user_db))
             login_user(user)
             return redirect(url_for('index'))
         else:
@@ -80,13 +83,13 @@ def login_process():
     loginform = LoginForm(request.form)
     if loginform.validate():
         username = loginform.username.data
-        user_db = redis_connection_user.get(username)
+        user_db = get_connection(db=current_app.config['USER_DB']).get(username)
         if user_db is not None:
             user = User.deserialize(user_db)
             if user.verify_password(loginform.password.data):
                 user.last_login = time()
                 user_db = user.serialize()
-                redis_connection_user.set(username, json.dumps(user_db))
+                get_connection(db=current_app.config['USER_DB']).set(username, json.dumps(user_db))
                 login_user(user, remember=True)
                 return redirect(url_for('index'))
             else:
