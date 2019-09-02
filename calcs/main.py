@@ -25,9 +25,6 @@ app, celery = factory_app()
 ######
 login_manager = LoginManager()
 login_manager.init_app(app)
-# redis_connection_user = Redis(host='redis', port=6379, db=1)
-# redis_connection = get_connection(db=app.config['CALCS_DB'])
-# redis_connection_user = get_connection(db=app.config['USER_DB'])
 
 
 @login_manager.user_loader
@@ -69,7 +66,8 @@ def schedule_calculation():
                               "result":  arguments,
                               "task_id": async_result.task_id
                               })
-        get_connection(db=app.config['CALCS_DB']).set(f'celery-task-meta-{async_result.task_id}', message)
+        get_connection(db=app.config['CALCS_DB']).set(f'celery-task-meta-{async_result.task_id}',
+                                                      message)
         return redirect(url_for('view_results'))
     else:
         assert func_name == 'expression'
@@ -84,6 +82,7 @@ def view_results():
     connection = get_connection(db=app.config['CALCS_DB'])
     for key in connection.keys('*'):
         result = json.loads(connection.get(key))
+        print(result)
         task_id = result['task_id']
         result = result['result']
         results_temp[task_id] = result

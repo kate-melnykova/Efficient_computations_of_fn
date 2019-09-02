@@ -11,15 +11,11 @@ from redis import Redis
 
 def factory_app():
     app = Flask(__name__, instance_relative_config=True, template_folder='templates')
-    app.config['broker_url'] = 'amqp://rabbitmq:5672//'
-    app.config['result_backend'] = 'redis://redis:6379'
-    app.config['imports'] = ['sci_funcs.tasks']
-    app.secret_key = 'super secret string'  # Change this!
+    app.secret_key = '1e9424b4-737b-4f49-91fa-cdb6290984e7'
+    app.config.from_object('config')
 
-    app.config['USER_DB'] = 1
-    app.config['CALCS_DB'] = 0
-
-    celery = Celery(app.name, broker=app.config['broker_url'])
+    celery = Celery(app.name)
     celery.set_default()
     celery.conf.update(app.config)
+    celery.config_from_object('celeryconf')
     return app, celery
