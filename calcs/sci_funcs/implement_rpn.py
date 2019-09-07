@@ -10,7 +10,8 @@ convert_alg_to_func = {
     '-': sub,
     '*': mul,
     '/': truediv,
-    '^': pow
+    '^': pow,
+    '--': lambda x: -x
 }
 
 
@@ -27,6 +28,9 @@ def compute_rpn(s: List[Decimal or str]) -> Decimal:
                 term2 = temp_stack.pop()
                 term1 = temp_stack.pop()
                 temp_stack.append(operator(term1, term2))
+            elif elem == '--':
+                term = temp_stack.pop()
+                temp_stack.append(-term)
             else:
                 [operator, nargs] = functions[elem]
                 terms = temp_stack[-nargs:]

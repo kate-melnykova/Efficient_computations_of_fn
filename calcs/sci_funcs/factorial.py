@@ -1,3 +1,5 @@
+from itertools import accumulate
+
 from time import time
 from typing import List, Dict
 
@@ -35,7 +37,9 @@ def factorial(arguments: Dict[str, int or str], parameter_names: List[str]):
 
         list_integ = list(range(2, n+1, 2))
         enough_time = True
-        sums = [sum(list_integ[i:]) for i in range(int(n/2))]
+        # sums = [sum(list_integ[i:]) for i in range(int(n/2))]
+        sums = list(range(n, 2, -2))
+        sums = list(accumulate(sums))[::-1]
 
         assert len(list_integ) == int(n/2)
 

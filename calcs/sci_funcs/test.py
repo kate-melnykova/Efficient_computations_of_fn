@@ -47,6 +47,17 @@ class Test_convertion_to_rpn(TestCase):
         self.assertListEqual(rpn('cos(arcsin(1/e))'), [Decimal('1'), Decimal(np.e),
                                                       '/', 'arcsin', 'cos'])
 
+    def test_precedence(self):
+        self.assertListEqual(rpn('3 * 4 +  6'), [Decimal('3'), Decimal('4'), '*', Decimal('6'), '+'])
+        self.assertListEqual(rpn('1-2*5'), [Decimal('1'), Decimal('2'), Decimal('5'), '*', '-'])
+        self.assertListEqual(rpn('1/2*4'), [Decimal('1'), Decimal('2'), '/', Decimal('4'), '*'])
+
+    def test_unary_minus(self):
+        self.assertListEqual(rpn('-6'), [Decimal('6'), '--'])
+        self.assertListEqual(rpn('-4+3'), [Decimal('4'), '--', Decimal('3'), '+'])
+        self.assertListEqual(rpn('2^-2'), [Decimal('2'), Decimal('2'), '--', '^'])
+        self.assertListEqual(rpn('-5^2'), [Decimal('5'), Decimal('2'), '^', '--'])
+
 
 class Test_computing_rpn(TestCase):
     def test_simple_algebra(self):
@@ -76,6 +87,16 @@ class Test_computing_rpn(TestCase):
                          Decimal(np.cos(8)+np.tan(7)))
         self.assertEqual(compute_rpn([Decimal('1'), Decimal(np.e), '/', 'arcsin', 'cos']),
                          Decimal(np.cos(np.arcsin(1/np.e))))
+
+    def test_precedence(self):
+        self.assertEqual(compute_rpn([Decimal('2'), Decimal('3'), Decimal('4'), '*', '+']), Decimal('14'))
+        self.assertEqual(compute_rpn([Decimal('5'), Decimal('6'), '*', Decimal('7'), '+']), Decimal('37'))
+
+    def test_unary_minus(self):
+        self.assertEqual(compute_rpn([Decimal('6'), '--']), Decimal('-6'))
+        self.assertEqual(compute_rpn([Decimal('4'), '--', Decimal('3'), '+']), Decimal('-1'))
+        self.assertEqual(compute_rpn([Decimal('2'), Decimal('2'), '--', '^']), Decimal('0.25'))
+        self.assertEqual(compute_rpn([Decimal('5'), Decimal('2'), '^', '--']), Decimal('-25'))
 
 
 if __name__ == '__main__':

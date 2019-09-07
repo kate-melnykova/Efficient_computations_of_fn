@@ -3,34 +3,35 @@ convert infix notation to rpn
 """
 from typing import List
 from decimal import Decimal
-import numpy as np
+import math
 
 precedence = {
     '+': 0,
     '-': 0,
     '*': 1,
-    '/': 1,
-    '^': 2
+    '/': 2,
+    '--': 3,
+    '^': 4
 }
 
 constants = {
-    'pi': np.pi,
-    'e': np.e
+    'pi': math.pi,
+    'e': math.e
 }
 
 functions = {
-    'sin': (np.sin, 1),
-    'cos': (np.cos, 1),
-    'tan': (np.tan, 1),
-    'tg': (np.tan, 1),
-    'cot': (lambda x: 1/np.tan(x), 1),
+    'sin': (math.sin, 1),
+    'cos': (math.cos, 1),
+    'tan': (math.tan, 1),
+    'tg': (math.tan, 1),
+    'cot': (lambda x: 1/math.tan(x), 1),
     # 'sec': np.sec,
-    'arcsin': (np.arcsin, 1),
-    'arccos': (np.arccos, 1),
+    'arcsin': (math.asin, 1),
+    'arccos': (math.acos, 1),
 
-    'exp': (np.exp, 1),
-    'ln': (np.log, 1),
-    'log': (np.log, 2)
+    'exp': (math.exp, 1),
+    'ln': (math.log, 1),
+    'log': (math.log, 2)
 }
 
 names = list(functions.keys()) + list(constants.keys()) \
@@ -54,7 +55,9 @@ def rpn(string):
     output = []
     op_queue = []
     string = preprocess(string)
+    token = None
     while string:
+        prev_token = token
         token = string.pop(0) # read token
         # if the token is a number, then:
         #    push it to the output queue.
@@ -69,21 +72,28 @@ def rpn(string):
             # if the token is a function then:
             #    push it onto the operator stack
             elif token in functions.keys():
-                op_queue = [token] + op_queue # TODO: modify for priorities
+                op_queue = [token] + op_queue
             elif token in ['+', '-', '*', '/', '^']:
-                # consider precedence
-                token_prec = precedence[token]
-                while op_queue:
-                    if op_queue[0] in ['+', '-', '*', '/', '^']:
-                        if precedence[op_queue[0]] > token_prec:
-                            token_temp = op_queue.pop(0)
-                            output.append(token_temp)
+                # check if it is unary minus or plus
+                if token in ['+', '-'] and (prev_token is None
+                                            or prev_token in functions
+                                            or prev_token in ['+', '-', '*', '/', '^']
+                                            or prev_token == '('):
+                    if token == '-':
+                        op_queue = ['--'] + op_queue
+                else:
+                    # consider precedence
+                    token_prec = precedence[token]
+                    while op_queue:
+                        if op_queue[0] in ['+', '-', '*', '/', '^', '--']:
+                            if precedence[op_queue[0]] > token_prec:
+                                token_temp = op_queue.pop(0)
+                                output.append(token_temp)
+                            else:
+                                break
                         else:
                             break
-                    else:
-                        break
-
-                op_queue = [token] + op_queue
+                    op_queue = [token] + op_queue
 
             # if the token is a left paren (i.e."("), then:
             #    push it onto the operator stack.
@@ -107,6 +117,7 @@ def rpn(string):
                     if op_queue[0] in functions:
                         token = op_queue.pop(0)
                         output.append(token)
+                token = ')'
 
     # after while loop, if operator stack not null, pop everything to output queue
     output += op_queue
