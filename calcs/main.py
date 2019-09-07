@@ -83,7 +83,6 @@ def view_results():
     connection = get_connection(db=app.config['CALCS_DB'])
     for key in connection.keys('*'):
         result = json.loads(connection.get(key))
-        print(result)
         task_id = result['task_id']
         result = result['result']
         results_temp[task_id] = result
