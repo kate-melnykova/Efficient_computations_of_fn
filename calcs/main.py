@@ -60,6 +60,7 @@ def schedule_calculation():
             arguments[item] = request.form[item]
 
         # get task identifier
+        get_connection(db=app.config['CALCS_DB'])
         async_result = args_to_function.delay(arguments, function_registry[func_name][1:])
 
         message = json.dumps({"status": "PENDING",

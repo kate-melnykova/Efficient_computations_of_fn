@@ -44,8 +44,6 @@ def generate_error_message(form_errors):
 
 auth = Blueprint('auth', __name__)
 
-# redis_connection_user = Redis(host='redis', port=6379, db=1)
-
 
 @auth.route('/login')
 @auth.route('/register')
@@ -104,20 +102,17 @@ def login_process():
         return redirect(url_for('auth.register'))
 
 
-@auth.route("/logout", methods=['GET', 'POST'])
+@auth.route("/logout")
 @login_required
 def logout():
-    if request.method == 'GET':
-        return render_template('logout.html')
-    else:
-        return redirect(url_for('auth.logout_process'))
+    return render_template('logout.html')
 
 
 @auth.route('/logout/process', methods=['POST'])
 def logout_process():
     if request.form['response'] == 'yes':
         logout_user()
-        print('Logged out')
+        flash('Successfully logged out')
         return redirect(url_for('auth.register'))
     else:
         return redirect(url_for('index'))

@@ -1,12 +1,5 @@
 from celery import Celery
 from flask import Flask
-from flask import url_for
-from flask import redirect
-from flask import request
-from flask import render_template
-import flask_login
-import json
-from redis import Redis
 
 
 def factory_app():
