@@ -28,7 +28,7 @@ Clearly, that would be a fair comparison between scientific formulas,
 very large, and the time complexity is a game changer. However,
 please be patient with this test -- it may be time-consuming.
 
-## Installation
+## Installation and usage
 Please make sure that `Docker` and `docker-compose` are installed. To start, clone
 the repository in the preferred directory
 ```bash
@@ -38,6 +38,9 @@ To start the server, run
 ```bash
 docker-compose up --build
 ```
+The server should start automatically, and you will see the main page
+![main page](https://github.com/kate-melnykova/Efficient_computations_of_fn/blob/master/docs/main_page.png "Main page")
+Enter the parameter to see the comparison and press the button.
 ## Algorithm sources
 Function `factorial.py` computes factorial by the formula introduced by
 [Fikret Cihana, Fatih Aydinb, Adnan Fatih Kocamaz](https://pdfs.semanticscholar.org/7388/ef8a3fa31b2d01f2835b3beeccdb16c0616a.pdf)
