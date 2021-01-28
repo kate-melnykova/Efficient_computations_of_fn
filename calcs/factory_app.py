@@ -21,9 +21,4 @@ def factory_app():
     app.register_error_handler(404, page_not_found)
     app.register_error_handler(403, forbidden)
     app.register_error_handler(401, unautharized)
-
-    celery = Celery(app.name)
-    celery.set_default()
-    celery.conf.update(app.config)
-    celery.config_from_object('celeryconf')
-    return app, celery
+    return app
