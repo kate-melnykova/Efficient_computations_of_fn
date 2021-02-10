@@ -1,23 +1,88 @@
 {% extends 'base.html' %}
 
-{% block title %}Scientific computations{% endblock %}
+{% block main %}
+    <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+        <h1 class="display-4">Computing &pi;</h1>
+        <h2 class="text-muted"> Which is faster?</h2>
+        <p class="lead">Accuracy = {{ accuracy }}</p>
+    </div>
+    <div>
+        Science vs math vs numpy
 
-{% block content %}
-<h1 id="home" align="center">Online calculator</h1>
-<div>
-    {% if result['enough_time'] == 'no' %}
-        <fieldset>
-            <p> Not enough time.</p>
-            <p> Computed only {{ result['accuracy_achieved'] }} digits. </p>
-        </fieldset>
-    {% endif %}
 
-    <fieldset>
-        <p> &pi; = {{ result['value'] }}</p>
-    </fieldset>
-    <fieldset>
-        <p> Requested time_limit = {{ result['time_limit'] }} </p>
-        <p> Digits of interest = {{ result['accuracy'] }}</p>
-    </fieldset>
-</div>
+        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
+            <div class="col">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="my-0 fw-normal">Direct approach</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            Rimman zeta function
+                            <br>
+                        </h1>
+                        \[{&pi;^2 \over 6}={1 \over 1^2}+{1 \over 2^2}+{1 \over 3^2}+...\]
+
+                        <p> Accuracy met: y/n <p>
+                        <p>Average time: time </p>
+                        <p>Standard deviation: ? </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="my-0 fw-normal">Efficient formula</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            Efficient formula
+                        </h1>
+                        <p> Accuracy met: y/n <p>
+                        <p> Average time: time </p>
+                        <p> Standard deviation: ? </p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="my-0 fw-normal">Math package</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">Math package</h1>
+                        <p> Accuracy met: y/n <p>
+                        <p>Average time: time </p>
+                        <p>Standard deviation: ? </p>
+                        <p> Add more runs </p>
+                        <form id="factorial" action="./factorial">
+                            <input type="number" id="n_runs" min="0" name="accuracy"/>
+                            </br>
+                            <br>
+                            <input type="submit" class="w-100 btn btn-lg btn-primary" id="submit_factorial"
+                                   name="compare" value="Add experiments">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header">
+                        <h4 class="my-0 fw-normal">Numpy package</h4>
+                    </div>
+                    <div class="card-body">
+                        <h1 class="card-title pricing-card-title">
+                            Pull it from memory
+                            <br>
+                        </h1>
+                        <p> Accuracy met: y/n <p>
+                        <p> Average time: time </p>
+                        <p> Standard deviation: ? </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 {% endblock %}

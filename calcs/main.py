@@ -21,14 +21,22 @@ def index():
 
 @app.route('/pi')
 def pi():
-    return render_template('pi.html')
+    accuracy = request.args.get('accuracy', 3)
+    # run it 1000 times
+    direct_times = ...
+    return render_template('pi.html',
+                           accuracy=accuracy)
 
 @app.route('/exponent')
 def exponent():
-    return render_template('exponent.html')
+    accuracy = request.args.get('accuracy', 3)
+    return render_template('exponent.html',
+                           accuracy=accuracy)
 
 @app.route('/factorial')
 def factorial():
-    return render_template('factorial.html')
+    argument = request.args.get('argument', 1000)
+    return render_template('factorial.html',
+                           argument=argument)
 
 
