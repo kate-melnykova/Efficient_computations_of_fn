@@ -1,4 +1,5 @@
 import timeit
+from typing import List
 import math
 from decimal import Decimal
 
@@ -10,19 +11,23 @@ def get_time_consumption(foo, n_runs=1000):
     :param n_runs: total number of runs
     :return: mean and std of runtime as a tuple
     """
-    timer = timeit.Timer(foo, number=1)
+    timer = timeit.Timer(foo)
     sum_ = Decimal(0)
     sum_squares = Decimal(0)
     for _ in range(n_runs):
         elapsed = Decimal(timer.timeit(number=1))
         sum_ += elapsed
         sum_squares += elapsed * elapsed
-    std = math.sqrt((sum_squares - sum_ * sum_)/Decimal(n_runs))
+    std = Decimal.sqrt((sum_squares - sum_ * sum_ / n_runs)/Decimal(n_runs))
     mean = sum_ / Decimal(n_runs)
     return mean, std
 
 
-def refine_estimates(foo, mean: Decimal, std: Decimal, n_runs, add_m_runs):
+def refine_estimates(foo,
+                     mean: Decimal,
+                     std: Decimal,
+                     n_runs: int,
+                     add_m_runs: int) -> List[Decimal]:
     """
     add additional runs to estimation
     :param foo:
@@ -35,5 +40,13 @@ def refine_estimates(foo, mean: Decimal, std: Decimal, n_runs, add_m_runs):
     sum_ = mean * n_runs
     std *= std
     sum_squares = std * n_runs + sum_ * sum_
+    timer = timeit.Timer(foo, number=1)
+    for _ in range(add_m_runs):
+        elapsed = Decimal(timer.timeit(number=1))
+        sum_ += elapsed
+        sum_squares += elapsed * elapsed
+    std = math.sqrt((sum_squares - sum_ * sum_)/Decimal(n_runs + add_m_runs))
+    mean = sum_ / Decimal(n_runs + add_m_runs)
+    return mean, std
 
 

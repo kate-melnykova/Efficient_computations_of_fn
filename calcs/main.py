@@ -8,7 +8,9 @@ from flask import request
 from flask import render_template
 import json
 
+from compare_time import get_time_consumption
 from factory_app import factory_app
+from sci_funcs import compute_pi, compute_e, factorial
 
 app = factory_app()
 
@@ -21,17 +23,29 @@ def index():
 
 @app.route('/pi')
 def pi():
-    accuracy = request.args.get('accuracy', 3)
-    # run it 1000 times
-    direct_times = ...
+    try:
+        accuracy = int(request.args.get('accuracy', 3))
+    except ValueError:
+        flash('Incorrect number of digits, must be integers')
+        return redirect(url_for('index'))
+
+    n_runs = 10000
+    # run it 10000 times
+    mean, std = get_time_consumption(lambda: compute_pi.compute_pi(accuracy),
+                                     n_runs=n_runs)
     return render_template('pi.html',
-                           accuracy=accuracy)
+                           accuracy=accuracy,
+                           mean=mean,
+                           std=std,
+                           n_runs=n_runs)
+
 
 @app.route('/exponent')
 def exponent():
     accuracy = request.args.get('accuracy', 3)
     return render_template('exponent.html',
                            accuracy=accuracy)
+
 
 @app.route('/factorial')
 def factorial():
